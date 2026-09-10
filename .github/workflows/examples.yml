@@ -1,0 +1,55 @@
+name: examples
+
+# Three things have to stay true, and each has bitten already:
+#   1. every example produces the verdict its own header claims,
+#   2. every example is reachable from a notebook (the Colab link students click),
+#   3. the notebooks actually execute top to bottom.
+# (3) caught a generator bug that silently dropped the last line of every code
+# cell -- the repo was green, the notebook was broken.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Every example is wired to a notebook and carries a verdict contract
+        run: bash scripts/lint_examples.sh
+
+  examples:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install --quiet z3-solver
+      - name: Run every example against its recorded verdict
+        run: bash scripts/check_examples.sh
+
+  notebooks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # Deliberately a bare environment, close to what Colab gives a student:
+      # only z3-solver plus the machinery to execute a notebook. If a notebook
+      # needs something else, it has to install it in its own setup cell -- and
+      # this job is what proves it does.
+      - run: pip install --quiet z3-solver nbclient nbformat ipykernel
+      - name: Execute every notebook end to end
+        run: bash scripts/run_notebooks.sh
