@@ -11,7 +11,8 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
 fail=0; n=0
-for f in sessions/*/smt2/*.smt2 sessions/*/python/*.py; do
+for f in sessions/*/smt2/*.smt2 sessions/*/python/*.py \
+         homework/*/smt2/*.smt2 homework/*/python/*.py; do
   [[ -e "$f" ]] || continue
   n=$((n+1))
   base="$(basename "$f")"
@@ -23,14 +24,14 @@ done
 
 # ...and the reverse: a notebook must not reference a file that no longer exists.
 for base in $(grep -rhoE '"[0-9]{2}_[a-z0-9_]+\.(smt2|py)"' notebooks/ | tr -d '"' | sort -u); do
-  if ! find sessions -name "$base" | grep -q .; then
+  if ! find sessions homework -name "$base" 2>/dev/null | grep -q .; then
     echo "!! notebooks reference $base, which does not exist" >&2
     fail=1
   fi
 done
 
 # Every .smt2 must carry its own expected verdict.
-for f in sessions/*/smt2/*.smt2; do
+for f in sessions/*/smt2/*.smt2 homework/*/smt2/*.smt2; do
   [[ -e "$f" ]] || continue
   grep -qE '^\s*;\s*EXPECT:\s*(sat|unsat|unknown)\s*$' "$f" || {
     echo "!! $f has no '; EXPECT:' contract in its header" >&2; fail=1; }

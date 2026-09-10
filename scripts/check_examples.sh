@@ -5,6 +5,7 @@
 #
 #   bash scripts/check_examples.sh                     # everything
 #   bash scripts/check_examples.sh sessions/cs3892-2026-09-10-*   # one session
+#   bash scripts/check_examples.sh homework/hw1-logic-sat-smt     # one homework
 #
 # .smt2  -- verdict must match the `; EXPECT:` line in the file header.
 # .py    -- must exit 0. Each script asserts its own result, so a wrong answer
@@ -16,12 +17,12 @@ PY="${PYTHON:-python3}"
 cd "$ROOT"
 
 targets=("$@")
-[[ ${#targets[@]} -eq 0 ]] && targets=(sessions/*/)
+[[ ${#targets[@]} -eq 0 ]] && targets=(sessions/*/ homework/*/)
 
 fail=0; n=0
 for d in "${targets[@]}"; do
   d="${d%/}"
-  [[ -d "$d" ]] || { echo "no such session: $d" >&2; fail=1; continue; }
+  [[ -d "$d" ]] || { echo "no such folder: $d" >&2; fail=1; continue; }
   echo "== $d"
 
   for f in "$d"/smt2/*.smt2; do
@@ -34,7 +35,9 @@ for d in "${targets[@]}"; do
     [[ -e "$f" ]] || continue
     n=$((n+1))
     echo "$f:"
-    if out=$("$PY" "$f" 2>&1); then
+    # Starters import their siblings (p2_timing pulls in p2_nqueens), so run
+    # each from its own directory rather than the repo root.
+    if out=$(cd "$(dirname "$f")" && "$PY" "$(basename "$f")" 2>&1); then
       echo "$out" | sed 's/^/  /'
       echo "  ok"
     else

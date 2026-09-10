@@ -6,21 +6,27 @@ Every worked example from the lectures, runnable in a browser with nothing
 installed. One folder per session, **named to match its slide deck**, so an
 example is never orphaned from the lecture that used it.
 
-## Sessions
+## Sessions and homeworks
 
 | Session | Open in Colab | Files |
 |---|---|---|
 | **Thu Sep 10** · Sets, logic, and solvers | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ttj/cs3892-examples/blob/main/notebooks/cs3892-2026-09-10-sets-and-propositional-logic.ipynb) | [`sessions/cs3892-2026-09-10-sets-and-propositional-logic`](sessions/cs3892-2026-09-10-sets-and-propositional-logic) |
+| **HW1** · Logic, SAT/SMT, bounded reachability — *due Thu Sep 24* | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ttj/cs3892-examples/blob/main/notebooks/hw1-logic-sat-smt.ipynb) | [`homework/hw1-logic-sat-smt`](homework/hw1-logic-sat-smt) |
 
 ## How it is laid out
 
 ```
-sessions/<slide-deck-name>/
+sessions/<slide-deck-name>/   lecture examples, one folder per session
+homework/<assignment>/        homework starters
   smt2/     SMT-LIB 2 — the standard language every SMT solver reads
-  python/   the same examples through Z3's Python API
-notebooks/<slide-deck-name>.ipynb   runs those files; does not copy them
-scripts/                            check, lint, run
+  python/   the same material through Z3's Python API
+notebooks/<name>.ipynb        runs those files; does not copy them
+scripts/                      check, lint, run, new_session
 ```
+
+**Homework folders are starters, not solutions.** Anything complete in one is
+worked on a *different* instance from the one the assignment asks about; the
+files carrying TODOs are the student's.
 
 **The notebooks contain no copies of the code.** They execute the real files, so
 a notebook cannot drift away from the repository — and CI executes the notebooks
