@@ -11,6 +11,7 @@ example is never orphaned from the lecture that used it.
 | Session | Open in Colab | Files |
 |---|---|---|
 | **Thu Sep 10** · Sets, logic, and solvers | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ttj/cs3892-examples/blob/main/notebooks/cs3892-2026-09-10-sets-and-propositional-logic.ipynb) | [`sessions/cs3892-2026-09-10-sets-and-propositional-logic`](sessions/cs3892-2026-09-10-sets-and-propositional-logic) |
+| **Tue Sep 15** · First-order logic and the duality | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ttj/cs3892-examples/blob/main/notebooks/cs3892-2026-09-15-first-order-logic-and-duality.ipynb) | [`sessions/cs3892-2026-09-15-first-order-logic-and-duality`](sessions/cs3892-2026-09-15-first-order-logic-and-duality) |
 | **HW1** · Logic, SAT/SMT, bounded reachability — *due Thu Sep 24* | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ttj/cs3892-examples/blob/main/notebooks/hw1-logic-sat-smt.ipynb) | [`homework/hw1-logic-sat-smt`](homework/hw1-logic-sat-smt) |
 
 ## How it is laid out
