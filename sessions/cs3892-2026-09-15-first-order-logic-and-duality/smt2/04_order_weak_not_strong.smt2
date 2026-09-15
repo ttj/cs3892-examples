@@ -1,5 +1,5 @@
 ; EXPECT: sat
-; Slide 18 -- the direction that does NOT hold.
+; Slide 21 -- the direction that does NOT hold.
 ;
 ; Here Sess(u,s) is true exactly when s = u: every user has their own session
 ; and no two users share one. So:

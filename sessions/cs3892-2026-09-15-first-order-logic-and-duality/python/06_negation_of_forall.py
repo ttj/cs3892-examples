@@ -1,4 +1,4 @@
-"""Slide 19 -- where every counterexample comes from.
+"""Slide 22 -- where every counterexample comes from.
 
     Not(ForAll x. P(x))   ===   Exists x. Not P(x)
 

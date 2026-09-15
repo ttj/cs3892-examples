@@ -1,5 +1,5 @@
 ; EXPECT: unsat
-; Slide 21 -- "A policy that covers users you have never seen"
+; Slide 25 -- "A policy that covers users you have never seen"
 ;
 ; One assertion covers every user at once. `bob` is declared AFTER the rule and
 ; the rule still binds him -- which the 1000 propositional clauses on slide 15

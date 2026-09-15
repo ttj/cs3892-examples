@@ -1,5 +1,5 @@
 ; EXPECT: unsat
-; Slide 19 -- "Where every counterexample comes from"
+; Slide 22 -- "Where every counterexample comes from"
 ;
 ;   not (forall x. P(x))   ===   exists x. not P(x)
 ;

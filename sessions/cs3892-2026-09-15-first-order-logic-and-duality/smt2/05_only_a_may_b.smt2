@@ -1,5 +1,5 @@
 ; EXPECT: sat
-; Slide 20 -- "Only users with an active session may read a document."
+; Slide 23 -- "Only users with an active session may read a document."
 ;
 ;   correct:   forall u,d. Reads(u,d) => Active(u)
 ;   reversed:  forall u,d. Active(u) => Reads(u,d)

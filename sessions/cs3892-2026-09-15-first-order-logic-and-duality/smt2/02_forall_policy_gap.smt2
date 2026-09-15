@@ -1,5 +1,5 @@
 ; EXPECT: sat
-; Slide 21 -- the same policy, with 18 changed to 6.
+; Slide 25 -- the same policy, with 18 changed to 6.
 ;
 ; `sat` here is not the solver failing. The rule only ever said what happens
 ; at twelve months or more; it said nothing at all about six. So a user with

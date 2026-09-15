@@ -7,12 +7,12 @@ the standard looks like, and as Python, which is what you will actually write.
 
 | # | Shows | Slide | Verdict |
 |---|---|---|---|
-| 01 | `forall_policy` — one rule binds a user declared after it | 21 | `unsat` |
-| 02 | `forall_policy_gap` — 18 becomes 6, and the model is the hole in your spec | 21 | `sat` |
-| 03 | `order_strong_implies_weak` — ∃∀ really does imply ∀∃ | 18 | `unsat` |
-| 04 | `order_weak_not_strong` — ∀∃ does **not** imply ∃∀ | 18 | `sat` |
-| 05 | `only_a_may_b` — "only A may B" is `B ⇒ A`, and the reversal is a different spec | 20 | `sat` |
-| 06 | `negation_of_forall` — ¬∀x P(x) ≡ ∃x ¬P(x), machine-checked | 19 | `unsat` |
+| 01 | `forall_policy` — one rule binds a user declared after it | 25 | `unsat` |
+| 02 | `forall_policy_gap` — 18 becomes 6, and the model is the hole in your spec | 25 | `sat` |
+| 03 | `order_strong_implies_weak` — ∃∀ really does imply ∀∃ | 21 | `unsat` |
+| 04 | `order_weak_not_strong` — ∀∃ does **not** imply ∃∀ | 21 | `sat` |
+| 05 | `only_a_may_b` — "only A may B" is `B ⇒ A`, and the reversal is a different spec | 23 | `sat` |
+| 06 | `negation_of_forall` — ¬∀x P(x) ≡ ∃x ¬P(x), machine-checked | 22 | `unsat` |
 | 07 | `coloring_sat` — five regions in a ring, three colours; the solver finds one | 32 | `sat` |
 | 08 | `coloring_unsat` — four mutually adjacent regions, three colours | 32 | `unsat` |
 

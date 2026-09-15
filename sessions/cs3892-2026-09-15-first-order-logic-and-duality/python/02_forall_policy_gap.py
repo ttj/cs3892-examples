@@ -1,4 +1,4 @@
-"""Slide 21 -- the same policy with 18 changed to 6.
+"""Slide 25 -- the same policy with 18 changed to 6.
 
 `sat` is not the solver failing. The rule only said what happens at twelve
 months or more, so a six-month user who is not approved is entirely consistent

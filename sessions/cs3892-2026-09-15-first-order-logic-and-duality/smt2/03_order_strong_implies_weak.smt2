@@ -1,5 +1,5 @@
 ; EXPECT: unsat
-; Slide 18 -- "Order matters, and it changes the meaning" (the easy direction)
+; Slide 21 -- "Order matters, and it changes the meaning" (the easy direction)
 ;
 ;   exists s. forall u. Sess(u,s)     "one session serves everyone"
 ;   forall u. exists s. Sess(u,s)     "everyone has a session, maybe their own"

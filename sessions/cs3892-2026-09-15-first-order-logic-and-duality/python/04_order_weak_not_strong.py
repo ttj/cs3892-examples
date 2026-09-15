@@ -1,4 +1,4 @@
-"""Slide 18 -- quantifier order, the direction that does NOT hold.
+"""Slide 21 -- quantifier order, the direction that does NOT hold.
 
 Sess(u, s) is true exactly when s == u: every user has their own session and
 no two users share one. Then

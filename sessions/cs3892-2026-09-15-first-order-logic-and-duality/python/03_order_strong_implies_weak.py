@@ -1,4 +1,4 @@
-"""Slide 18 -- quantifier order, the direction that DOES hold.
+"""Slide 21 -- quantifier order, the direction that DOES hold.
 
     Exists s. ForAll u. Sess(u, s)    "one session serves everyone"
     ForAll u. Exists s. Sess(u, s)    "everyone has a session, maybe their own"

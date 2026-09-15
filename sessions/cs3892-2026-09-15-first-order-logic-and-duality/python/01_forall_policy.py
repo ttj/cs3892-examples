@@ -1,4 +1,4 @@
-"""Slide 21 -- a policy that covers users you have never seen.
+"""Slide 25 -- a policy that covers users you have never seen.
 
 One assertion covers every user at once. `bob` is created AFTER the rule and
 the rule still binds him, which the propositional encoding on slide 15 could
