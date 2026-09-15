@@ -13,6 +13,8 @@ the standard looks like, and as Python, which is what you will actually write.
 | 04 | `order_weak_not_strong` — ∀∃ does **not** imply ∃∀ | 18 | `sat` |
 | 05 | `only_a_may_b` — "only A may B" is `B ⇒ A`, and the reversal is a different spec | 20 | `sat` |
 | 06 | `negation_of_forall` — ¬∀x P(x) ≡ ∃x ¬P(x), machine-checked | 19 | `unsat` |
+| 07 | `coloring_sat` — five regions in a ring, three colours; the solver finds one | 32 | `sat` |
+| 08 | `coloring_unsat` — four mutually adjacent regions, three colours | 32 | `unsat` |
 
 ## The three things worth taking from these
 
@@ -24,6 +26,11 @@ needs, derives a contradiction, and stops.
 model instead. The model is the answer: the policy says nothing about service
 under twelve months, so the case you were worried about is genuinely allowed.
 Read the model before you change the code.
+
+**`unsat` is a proof of impossibility.** `08` does not report "I looked and did
+not find a colouring" — it reports that none exists. In the language of the
+lecture, `⟦legal colouring⟧ = ∅`, which is why `unsat` is the answer you want
+when you are trying to show something *cannot* happen.
 
 **Order and direction are the specification.** `03`/`04` differ only in the
 order of two quantifiers and `05` only in the direction of one arrow, and in
