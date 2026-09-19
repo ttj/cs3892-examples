@@ -2,3 +2,13 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 .venv*/
+
+# Credentials. This repo is PUBLIC, and the toolkit's bearer cache defaults to a
+# path relative to the working directory — so a toolkit run started from here
+# would drop a live Brightspace JWT into this tree. Nothing may make that
+# committable.
+.env
+.env.local
+.brightspace_session.json
+.brightspace_bearer.json
+.brightspace_tokens.json
