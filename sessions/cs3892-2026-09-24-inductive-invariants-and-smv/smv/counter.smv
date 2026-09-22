@@ -1,0 +1,33 @@
+-- The course's running counter in the SMV language (NuSMV / nuXmv).
+--
+-- Same machine as every other file in this folder, written the way a model
+-- checker wants it. Compare it to the Z3 encodings: ASSIGN init/next IS the
+-- transition relation, just with a syntax that names the variable once instead
+-- of writing x and x' side by side.
+--
+-- Run it in the browser, no install:  https://bit.ly/fmaiv_smvis
+-- Or locally:                         NuSMV counter.smv
+
+MODULE main
+  VAR
+    x : 0..25;                 -- the counter. Bounded here because an explicit
+                               -- model checker must enumerate; Z3 let us leave
+                               -- it over all of Int.
+
+  ASSIGN
+    init(x) := 0;
+    next(x) := case
+                 x < 10 : x + 1;   -- the guard
+                 TRUE   : 0;       -- the reset
+               esac;
+
+  -- The safety property. A model checker proves this for EVERY run, with no
+  -- bound -- which is the thing bounded model checking could not give us.
+  SPEC AG (x <= 10)
+
+  -- True as well, and the interesting one: the machine really does get there.
+  SPEC EF (x = 10)
+
+  -- FALSE on purpose. Ask for it and NuSMV hands back a counterexample trace,
+  -- which is the same object Z3 gave us as a model.
+  SPEC AG (x <= 9)
