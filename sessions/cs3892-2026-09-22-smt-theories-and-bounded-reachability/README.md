@@ -11,6 +11,7 @@ Worked examples for the lecture of the same name — Session 8, Tuesday 22 Septe
 | `smt2/03_bmc_unroll_k3.smt2` | one step short — `unsat` that is **not** a proof of safety | `unsat` |
 | `python/03_scaling.py` | 100,000 variables in a fraction of a second; 11 pigeons is worse | `sat` / `unsat` |
 | `python/04_abstract_core.py` | an UNSAT core with no domain meaning attached | core = `A1 A2 A3` |
+| `python/05_modes_efsm.py` | the two-mode extended state machine — a relation over **two** variables | `x = 11` unreachable |
 
 **`02_bmc_unroll.py` is the method for HW1 Part 3, on a different machine.** The
 thermostat here starts at 20 and each step adds +3 or −1; Part 3's counter starts
