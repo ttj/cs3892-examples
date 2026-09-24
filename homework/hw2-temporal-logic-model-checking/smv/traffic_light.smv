@@ -1,0 +1,98 @@
+-- HW2 Part 2 -- a vehicle-actuated traffic light. The MODEL is complete; the
+-- SPECIFICATIONS are yours. Add one per requirement at the bottom of the file.
+--
+-- A main road and a side road meet at an intersection. The main road is green
+-- by default. A detector on the side road reports vehicles; once one has been
+-- seen, the controller finishes a minimum main-road green, then hands the
+-- intersection to the side road. The side road keeps its green only while
+-- vehicles keep arriving, up to a maximum; then control returns to the main
+-- road. Between the two greens there is always a yellow and an all-red step.
+--
+-- One step of the model is one controller tick.
+--
+-- State variables
+--   phase  where the controller is in its cycle:
+--            MG    main road green,  side road red
+--            MY    main road yellow, side road red
+--            AR_S  all red; the side road is next
+--            SG    side road green,  main road red
+--            SY    side road yellow, main road red
+--            AR_M  all red; the main road is next
+--   timer  ticks already spent in the current green phase: 0 on its first
+--          tick, then 1, then 2, where a main-road green holds it. Always 0
+--          outside the two green phases.
+--   car    FREE INPUT: TRUE when the side-road detector sees a vehicle this
+--          tick. It has no init() and no next(), so its value is chosen fresh
+--          at every step -- including the very first one.
+--   call   TRUE once a side-road vehicle has been detected and not yet
+--          served. Set by `car`; cleared by the side road's green phase.
+--
+-- Abbreviations (DEFINE) you can use in specifications, one per lamp:
+--   main_green  main_yellow  main_red      side_green  side_yellow  side_red
+--
+-- Run it:  NuSMV traffic_light.smv    (or nuXmv traffic_light.smv)
+
+MODULE main
+  VAR
+    phase : {MG, MY, AR_S, SG, SY, AR_M};
+    timer : 0..2;
+    car   : boolean;
+    call  : boolean;
+
+  ASSIGN
+    init(phase) := MG;
+    init(timer) := 0;
+    init(call)  := FALSE;
+
+    next(phase) := case
+                     phase = MG & timer = 2 & call   : MY;    -- demand, after the minimum green
+                     phase = MG                      : MG;    -- otherwise the main road keeps green
+                     phase = MY                      : AR_S;
+                     phase = AR_S                    : SG;
+                     phase = SG & car & timer < 2    : SG;    -- extend while vehicles keep coming
+                     phase = SG                      : SY;    -- no vehicle, or maximum reached
+                     phase = SY                      : AR_M;
+                     phase = AR_M                    : MG;
+                   esac;
+
+    next(timer) := case
+                     phase = MG & timer < 2          : timer + 1;
+                     phase = MG & call               : 0;     -- leaving MG
+                     phase = MG                      : timer; -- holding MG at timer = 2
+                     phase = SG & car & timer < 2    : timer + 1;
+                     TRUE                            : 0;
+                   esac;
+
+    next(call) := case
+                    phase = SG                       : FALSE; -- the side road is being served
+                    car                              : TRUE;  -- a vehicle is detected: remember it
+                    TRUE                             : call;
+                  esac;
+
+  DEFINE
+    main_green  := phase = MG;
+    main_yellow := phase = MY;
+    main_red    := !(main_green | main_yellow);
+    side_green  := phase = SG;
+    side_yellow := phase = SY;
+    side_red    := !(side_green | side_yellow);
+
+-- Your specifications. One per requirement, in the handout's order, each with
+-- the requirement's number in a comment. Use LTLSPEC for LTL and SPEC (or
+-- CTLSPEC) for CTL.
+
+-- R1
+
+-- R2
+
+-- R3
+
+-- R4
+
+-- R5
+
+-- R6
+
+-- R7
+
+-- R8

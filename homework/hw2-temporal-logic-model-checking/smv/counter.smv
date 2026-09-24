@@ -1,0 +1,38 @@
+-- HW2 Part 3 -- the course's running counter, exactly as defined in
+-- labs/running-example.md: x starts at 0, adds 1 while x < 10, resets to 0 at
+-- the cap. Both properties below are TRUE on this file as given.
+--
+-- Your job (Part 3): plant a bug in next(x) -- change nothing else -- so that
+-- the property fails, then read the counterexample NuSMV gives you.
+--
+-- Why x is declared 0..25 and not 0..10: if the type already stopped x at 10,
+-- the property would hold by declaration and there would be nothing to check.
+-- The bound has to come from the transition relation.
+--
+-- One thing that will bite: NuSMV checks the RANGE of every next(x) branch for
+-- every declared value of x, reachable or not. If any branch can produce a
+-- value outside 0..25 -- say 26 -- the tool stops before checking anything,
+-- with   "cannot assign value 26 to variable x".   That is a type error, not a
+-- counterexample. Keep your bug's arithmetic inside 0..25.
+--
+-- Run it:  NuSMV counter.smv    (or nuXmv counter.smv)
+--
+-- Part 3 needs only that plain check. If you do try `-bmc` on this file, expect
+-- "Warning: cannot assign value 26 to variable x" even before you change
+-- anything: under BMC it is a warning, not the error above, and the run goes on.
+
+MODULE main
+  VAR
+    x : 0..25;
+
+  ASSIGN
+    init(x) := 0;
+    next(x) := case
+                 x < 10 : x + 1;   -- the guard
+                 TRUE   : 0;       -- the reset
+               esac;
+
+  -- The same property twice: as an invariant, and as LTL. Their
+  -- counterexamples are shaped differently -- compare them.
+  INVARSPEC x <= 10
+  LTLSPEC   G (x <= 10)

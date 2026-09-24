@@ -1,0 +1,33 @@
+-- HW2 Part 4 -- the bound hunt.
+--
+-- Two counters tick together, one step at a time: `a` counts 0..4 and wraps,
+-- `b` counts 0..6 and wraps. `bug` names one particular combination of the
+-- two, and the property says that combination never happens. It does happen.
+-- The question is how deep it is, and what bounded model checking can and
+-- cannot tell you about that.
+--
+-- Unbounded check (BDDs) -- looks at every reachable state:
+--   NuSMV bmc_depth.smv
+--
+-- Bounded check (BMC) at bound K -- looks only at runs of at most K steps:
+--   NuSMV -bmc -bmc_length K bmc_depth.smv
+--
+-- nuXmv takes exactly the same command lines.
+
+MODULE main
+  VAR
+    a : 0..4;
+    b : 0..6;
+
+  ASSIGN
+    init(a) := 0;
+    init(b) := 0;
+
+    next(a) := (a + 1) mod 5;    -- 0, 1, 2, 3, 4, 0, 1, ...
+
+    next(b) := (b + 1) mod 7;    -- 0, 1, ..., 6, 0, 1, ...
+
+  DEFINE
+    bug := a = 2 & b = 5;
+
+  LTLSPEC G !bug

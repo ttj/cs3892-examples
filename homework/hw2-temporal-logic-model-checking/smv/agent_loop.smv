@@ -1,0 +1,55 @@
+-- HW2 Part 1 -- read this model before you run it.
+--
+-- A tool-using agent, reduced to its control loop. It sits idle until a task
+-- arrives, makes three tool calls, reports, and goes back to idle.
+--
+--   mode   where the agent is in its loop
+--   calls  how many tool calls it has made on the current task
+--   task   a FREE INPUT: it has no init() and no next(), so the model checker
+--          may choose TRUE or FALSE for it at every step. It models the
+--          outside world handing the agent work, or not.
+--
+-- Before running anything, work out by hand (Part 1 of the handout):
+--   * the initial state(s),
+--   * the transition relation -- what can follow what,
+--   * the size of the state space, declared and reachable,
+--   * the verdict of each of P1-P4 below.
+-- Then run it:   NuSMV agent_loop.smv      (or nuXmv agent_loop.smv)
+-- NuSMV prints CTL (SPEC) results before LTL (LTLSPEC) results, so match each
+-- verdict to its property by the formula it prints, not by its position.
+
+MODULE main
+  VAR
+    mode  : {idle, working, reporting};
+    calls : 0..3;
+    task  : boolean;
+
+  ASSIGN
+    init(mode)  := idle;
+    init(calls) := 0;
+
+    next(mode) := case
+                    mode = idle & task            : working;
+                    mode = idle                   : idle;
+                    mode = working & calls = 3    : reporting;
+                    mode = working                : working;
+                    mode = reporting              : idle;
+                  esac;
+
+    next(calls) := case
+                     mode = working & calls < 3   : calls + 1;
+                     mode = reporting             : 0;
+                     TRUE                         : calls;
+                   esac;
+
+  -- P1
+  SPEC    AG (mode = reporting -> calls = 3)
+
+  -- P2
+  LTLSPEC G (calls = 3 -> X (calls = 0))
+
+  -- P3
+  LTLSPEC F (mode = reporting)
+
+  -- P4
+  LTLSPEC G (mode = working -> F (mode = reporting))
