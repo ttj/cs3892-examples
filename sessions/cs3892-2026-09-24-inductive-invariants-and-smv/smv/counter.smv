@@ -7,6 +7,11 @@
 --
 -- Run it in the browser, no install:  https://bit.ly/fmaiv_smvis
 -- Or locally:                         NuSMV counter.smv
+--                                      nuXmv counter.smv   (same verdicts)
+--
+-- Verified Sep 24 with NuSMV 2.7.0 and nuXmv 2.2.0: AG (x <= 10) true,
+-- EF (x = 10) true, AG (x <= 9) false with the 11-state trace x = 0 .. 10.
+-- nuXmv's IC3 (go_msat; check_invar_ic3 -p "x <= 10") proves the invariant too.
 
 MODULE main
   VAR
