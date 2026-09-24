@@ -1,0 +1,24 @@
+-- One property, three engines. The running counter again (slides 5-8 of
+-- session 9): starts at 0, adds 1 while x < 10, resets to 0 at 10.
+--
+-- INVARSPEC is "P holds in every reachable state" -- the invariant of
+-- session 9, written directly rather than as the CTL formula AG P.
+--
+-- Run it three ways in nuXmv (-int):          what each one tells you
+--   go ; check_invar                     BDDs: computes Reachable exactly
+--   go_bmc ; check_invar_bmc -k 12       BMC:  only runs of length <= 12
+--   go_msat ; check_invar_ic3            IC3:  builds an inductive invariant
+-- NuSMV has the first two; IC3 is nuXmv's.
+
+MODULE main
+  VAR
+    x : 0..25;
+  ASSIGN
+    init(x) := 0;
+    next(x) := case
+                 x < 10 : x + 1;
+                 TRUE   : 0;
+               esac;
+
+  INVARSPEC x <= 10     -- true
+  INVARSPEC x <= 9      -- false: x reaches 10 after ten steps

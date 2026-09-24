@@ -1,0 +1,22 @@
+-- The add-2 counter from session 9, slides 19-22, over the UNBOUNDED integers.
+-- nuXmv only: `integer` is an infinite type, which needs its SMT engine.
+-- NuSMV rejects this file; that is expected.
+--
+--   nuXmv -int 02_add2_integer.smv
+--   nuXmv > go_msat
+--   nuXmv > check_invar_ic3
+--   -- invariant x != 5  is true
+--
+-- Session 9: x != 5 is TRUE but NOT inductive (x = 3 steps to 5), and we
+-- strengthened it by hand to "x is even". IC3 does that search for you --
+-- and it has to, because `mod` is not even available on integers here, so
+-- the strengthening we wrote on the slide cannot be typed into this file.
+
+MODULE main
+  VAR
+    x : integer;
+  ASSIGN
+    init(x) := 0;
+    next(x) := x + 2;
+
+  INVARSPEC x != 5

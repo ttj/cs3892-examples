@@ -1,0 +1,20 @@
+-- A first look at Thursday's LTL, on the same counter.
+--   G p      p holds at every step of every run            (safety)
+--   G F p    p holds infinitely often                      (liveness)
+--   F G p    from some point on, p holds forever
+-- A false LTL property gets a LASSO counterexample: a prefix, then a loop
+-- that repeats forever ("-- Loop starts here" in the trace).
+
+MODULE main
+  VAR
+    x : 0..25;
+  ASSIGN
+    init(x) := 0;
+    next(x) := case
+                 x < 10 : x + 1;
+                 TRUE   : 0;
+               esac;
+
+  LTLSPEC G (x <= 10)     -- true
+  LTLSPEC G F (x = 0)     -- true: the reset keeps coming back
+  LTLSPEC F G (x = 10)    -- false: the counter never settles at 10
