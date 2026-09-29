@@ -11,7 +11,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
 fail=0; n=0
-for f in sessions/*/smt2/*.smt2 sessions/*/python/*.py \
+for f in sessions/*/smt2/*.smt2 sessions/*/python/*.py sessions/*/smv/*.smv \
          homework/*/smt2/*.smt2 homework/*/python/*.py; do
   [[ -e "$f" ]] || continue
   n=$((n+1))
@@ -23,7 +23,7 @@ for f in sessions/*/smt2/*.smt2 sessions/*/python/*.py \
 done
 
 # ...and the reverse: a notebook must not reference a file that no longer exists.
-for base in $(grep -rhoE '"[0-9]{2}_[a-z0-9_]+\.(smt2|py)"' notebooks/ | tr -d '"' | sort -u); do
+for base in $(grep -rhoE '"[0-9]{2}_[a-z0-9_]+\.(smt2|py|smv)"' notebooks/ | tr -d '"' | sort -u); do
   if ! find sessions homework -name "$base" 2>/dev/null | grep -q .; then
     echo "!! notebooks reference $base, which does not exist" >&2
     fail=1

@@ -1,0 +1,44 @@
+-- Session 11 -- strong versus weak "until", on the FIXED agent.
+--
+-- Same agent as 03_agent_approval_buggy.smv, minus the shortcut: from plan
+-- it can only ask or abandon. The requirement is unchanged:
+--     "The agent never deletes anything a human has not approved."
+--
+--   p U q    STRONG until: q MUST eventually happen, and p holds until then.
+--   p W q    WEAK until: p holds until q -- or forever, if q never comes.
+--            NuSMV's LTL has no W; write it as  (p U q) | G p.
+--
+-- p U q is neither a safety nor a liveness property. It is exactly the two
+-- together:   p U q  =  (p W q)  &  F q
+--                        safety     liveness
+-- The English requirement is only the safety half. On a run where every task
+-- is abandoned, no approval ever comes and nothing is ever deleted: the
+-- requirement holds, and the strong until fails -- because of the F q half.
+
+MODULE main
+  VAR
+    step     : {plan, ask, act, abort, done};
+    approved : boolean;               -- this step's action was approved by a human
+  DEFINE
+    del := step = act;                -- the irreversible action happens now
+  ASSIGN
+    init(step)     := plan;
+    init(approved) := FALSE;
+    next(step) := case
+                    step = plan  : {ask, abort};        -- fixed: no shortcut
+                    step = ask   : {act, abort};        -- human: yes / no
+                    step = act   : done;
+                    step = abort : done;
+                    step = done  : plan;                -- next task
+                  esac;
+    -- TRUE exactly in an act step that a human's "yes" led to.
+    next(approved) := step = ask & next(step) = act;
+
+  -- The correct formalization from 03 -- now TRUE.
+  LTLSPEC G (del -> approved)
+
+  -- Strong until: FALSE. The counterexample abandons every task, forever.
+  LTLSPEC !del U approved
+
+  -- Weak until, written out: TRUE.
+  LTLSPEC (!del U approved) | G !del

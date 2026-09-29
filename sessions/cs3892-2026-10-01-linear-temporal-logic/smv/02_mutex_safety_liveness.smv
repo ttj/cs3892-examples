@@ -1,0 +1,54 @@
+-- Session 11 -- safety versus liveness, on two processes sharing a lock.
+--
+-- Each process, a and b, cycles idle -> trying -> critical -> idle, and may
+-- enter its critical section only when the other is not in its own. A
+-- scheduler lets exactly ONE process take a step at a time; which one is the
+-- free variable `move`, chosen afresh at every step -- so the model checker
+-- gets to play the scheduler, including an unfair one.
+--
+--   SAFETY    "something bad never happens". Refuted by a FINITE prefix:
+--             once the bad state appears, no continuation can repair it.
+--   LIVENESS  "something good keeps happening / eventually happens". No finite
+--             prefix refutes it -- the good thing could always come later.
+--             A counterexample must be an INFINITE run: in a finite-state
+--             model, a LASSO (a prefix, then a loop repeated forever).
+--
+-- NuSMV does NOT print verdicts in file order: on this file every LTLSPEC
+-- result comes out before the INVARSPEC one. Match each verdict to its
+-- property by the formula it prints, not by its position.
+
+MODULE main
+  VAR
+    a    : {idle, trying, critical};
+    b    : {idle, trying, critical};
+    move : 1..2;              -- the scheduler: 1 runs a this step, 2 runs b
+  DEFINE
+    crit_a := a = critical;
+    crit_b := b = critical;
+  ASSIGN
+    init(a) := idle;
+    init(b) := idle;
+    next(a) := case
+                 move = 1 & a = idle                   : trying;
+                 move = 1 & a = trying & b != critical : critical;
+                 move = 1 & a = critical               : idle;
+                 TRUE                                  : a;
+               esac;
+    next(b) := case
+                 move = 2 & b = idle                   : trying;
+                 move = 2 & b = trying & a != critical : critical;
+                 move = 2 & b = critical               : idle;
+                 TRUE                                  : b;
+               esac;
+
+  -- Safety: mutual exclusion. True.
+  LTLSPEC G !(crit_a & crit_b)
+
+  -- Safety, and false: a does get in. Compare the two counterexamples to the
+  -- same statement, once as an invariant and once in LTL.
+  INVARSPEC !crit_a
+  LTLSPEC   G !crit_a
+
+  -- Liveness: if a is trying, a eventually gets in. FALSE -- the scheduler
+  -- can run b forever while a waits. The counterexample is a lasso.
+  LTLSPEC G (a = trying -> F crit_a)

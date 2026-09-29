@@ -13,6 +13,10 @@ example is never orphaned from the lecture that used it.
 | **Thu Sep 10** · Sets, logic, and solvers | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ttj/cs3892-examples/blob/main/notebooks/cs3892-2026-09-10-sets-and-propositional-logic.ipynb) | [`sessions/cs3892-2026-09-10-sets-and-propositional-logic`](sessions/cs3892-2026-09-10-sets-and-propositional-logic) |
 | **Tue Sep 15** · First-order logic and the duality | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ttj/cs3892-examples/blob/main/notebooks/cs3892-2026-09-15-first-order-logic-and-duality.ipynb) | [`sessions/cs3892-2026-09-15-first-order-logic-and-duality`](sessions/cs3892-2026-09-15-first-order-logic-and-duality) |
 | **Thu Sep 17** · SAT solving and proof by refutation | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ttj/cs3892-examples/blob/main/notebooks/cs3892-2026-09-17-sat-solving-and-refutation.ipynb) | [`sessions/cs3892-2026-09-17-sat-solving-and-refutation`](sessions/cs3892-2026-09-17-sat-solving-and-refutation) |
+| **Tue Sep 22** · SMT, theories, and bounded reachability | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ttj/cs3892-examples/blob/main/notebooks/cs3892-2026-09-22-smt-theories-and-bounded-reachability.ipynb) | [`sessions/cs3892-2026-09-22-smt-theories-and-bounded-reachability`](sessions/cs3892-2026-09-22-smt-theories-and-bounded-reachability) |
+| **Thu Sep 24** · Inductive invariants and SMV | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ttj/cs3892-examples/blob/main/notebooks/cs3892-2026-09-24-inductive-invariants-and-smv.ipynb) | [`sessions/cs3892-2026-09-24-inductive-invariants-and-smv`](sessions/cs3892-2026-09-24-inductive-invariants-and-smv) |
+| **Tue Sep 29** · nuXmv in depth (lightning-talk backup) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ttj/cs3892-examples/blob/main/notebooks/cs3892-2026-09-29-project-lightning-talks.ipynb) | [`sessions/cs3892-2026-09-29-project-lightning-talks`](sessions/cs3892-2026-09-29-project-lightning-talks) |
+| **Thu Oct 1** · Linear temporal logic | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ttj/cs3892-examples/blob/main/notebooks/cs3892-2026-10-01-linear-temporal-logic.ipynb) | [`sessions/cs3892-2026-10-01-linear-temporal-logic`](sessions/cs3892-2026-10-01-linear-temporal-logic) |
 | **HW1** · Logic, SAT/SMT, bounded reachability — *due Thu Sep 24* | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ttj/cs3892-examples/blob/main/notebooks/hw1-logic-sat-smt.ipynb) | [`homework/hw1-logic-sat-smt`](homework/hw1-logic-sat-smt) |
 
 ## How it is laid out
@@ -22,6 +26,7 @@ sessions/<slide-deck-name>/   lecture examples, one folder per session
 homework/<assignment>/        homework starters
   smt2/     SMT-LIB 2 — the standard language every SMT solver reads
   python/   the same material through Z3's Python API
+  smv/      SMV models for NuSMV / nuXmv, from session 9 on
 notebooks/<name>.ipynb        runs those files; does not copy them
 scripts/                      check, lint, run, new_session
 ```
@@ -59,7 +64,9 @@ Each `.smt2` carries its expected verdict in its own header:
 ; EXPECT: unsat
 ```
 
-and each `.py` asserts its own result. So a wrong answer is a **failure**, not a
+and each `.py` asserts its own result. An `.smv` model's verdicts are asserted
+by the notebook that runs it, which fetches NuSMV from FBK first — so CI
+checks them when it executes the notebooks. So a wrong answer is a **failure**, not a
 number nobody notices. `scripts/run_smt2.py` runs SMT-LIB through the Z3 Python
 bindings rather than a shell command, because the `z3-solver` pip wheel ships
 **no `z3` CLI** — this way Colab, CI and your laptop all behave identically.

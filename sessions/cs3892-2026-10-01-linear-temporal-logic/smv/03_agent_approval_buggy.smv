@@ -1,0 +1,46 @@
+-- Session 11 -- English to LTL, and how it goes wrong.
+--
+-- An agent handles one task at a time. For each task it plans, then either
+-- asks a human for approval or abandons the task. Approved, it performs one
+-- irreversible action -- call it `del`, a delete. Then it starts again.
+--
+-- THIS COPY HAS A BUG: an "urgent" shortcut lets it go straight from plan to
+-- the delete without asking anyone (the third choice under step = plan).
+--
+-- The requirement, in English:
+--     "The agent never deletes anything a human has not approved."
+--
+-- Three candidate formalizations are below. Only one of them catches the bug.
+-- The other two come back TRUE on this buggy agent -- true, and wrong.
+-- 04_agent_approval_fixed.smv is the same agent without the shortcut.
+
+MODULE main
+  VAR
+    step     : {plan, ask, act, abort, done};
+    approved : boolean;               -- this step's action was approved by a human
+  DEFINE
+    del := step = act;                -- the irreversible action happens now
+  ASSIGN
+    init(step)     := plan;
+    init(approved) := FALSE;
+    next(step) := case
+                    step = plan  : {ask, abort, act};   -- BUG: plan -> act
+                    step = ask   : {act, abort};        -- human: yes / no
+                    step = act   : done;
+                    step = abort : done;
+                    step = done  : plan;                -- next task
+                  esac;
+    -- TRUE exactly in an act step that a human's "yes" led to.
+    next(approved) := step = ask & next(step) = act;
+
+  -- (a) Correct. FALSE here -- it catches the shortcut in two steps.
+  LTLSPEC G (del -> approved)
+
+  -- (b) Precedence. Unary operators bind tighter than ->, so this is
+  --     (G del) -> approved. "G del" is false in the first state, so the
+  --     implication is vacuously TRUE. It says nothing about the agent.
+  LTLSPEC G del -> approved
+
+  -- (c) Direction. "Only if approved" became "if approved, then eventually
+  --     delete" -- a different requirement, and TRUE on this buggy agent.
+  LTLSPEC G (approved -> F del)

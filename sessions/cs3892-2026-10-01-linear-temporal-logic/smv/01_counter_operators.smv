@@ -1,0 +1,34 @@
+-- Session 11 -- the four LTL operators, one at a time, on the course's
+-- running example (cs3892-class/labs/running-example.md):
+--   x starts at 0, adds one while x < 10, and resets to 0 at the cap.
+--
+-- An LTL formula is judged on a RUN: an infinite sequence of states.
+-- A model satisfies it when EVERY run from an initial state does. This
+-- counter has exactly one run: 0, 1, ..., 10, 0, 1, ..., 10, 0, ...
+--
+--   X p     p holds at the NEXT step
+--   G p     p holds at EVERY step from now on         (Globally)
+--   F p     p holds at SOME step from now on          (Finally)
+--   p U q   q holds at some step, and p at every step before it   (Until)
+--
+-- Every formula below is checked at the FIRST state of the run.
+-- NuSMV prints the verdicts in file order here (all are LTLSPEC).
+
+MODULE main
+  VAR
+    x : 0..25;
+  ASSIGN
+    init(x) := 0;
+    next(x) := case
+                 x < 10 : x + 1;
+                 TRUE   : 0;
+               esac;
+
+  LTLSPEC X (x = 1)                  -- true:  the second state is x = 1
+  LTLSPEC G (x <= 10)                -- true:  safety -- the invariant again
+  LTLSPEC F (x = 10)                 -- true:  the cap is reached
+  LTLSPEC (x < 10) U (x = 10)        -- true:  below 10 at every step until 10
+  LTLSPEC (x < 5) U (x = 10)         -- false: x = 5 arrives before x = 10
+  LTLSPEC G (x = 10 -> X (x = 0))    -- true:  every cap is followed by a reset
+  LTLSPEC G F (x = 0)                -- true:  x = 0 comes back infinitely often
+  LTLSPEC F G (x = 10)               -- false: x never stays at 10 -- a lasso
