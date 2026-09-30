@@ -39,8 +39,8 @@ done
 
 # Instructor-only solutions live in the private instructor repo and carry this
 # marker. This repository is public: refuse any file that has it.
-if grep -rlI --exclude-dir=.git -e "INSTRUCTOR ONLY" -e "HW2 SOLUTION" . | grep -v "^./scripts/lint_examples.sh$" | grep -q .; then
-  grep -rlI --exclude-dir=.git -e "INSTRUCTOR ONLY" -e "HW2 SOLUTION" . | grep -v "^./scripts/lint_examples.sh$" | sed 's/^/!! solution marker in a PUBLIC repo: /' >&2
+if grep -rlI --exclude-dir=.git -e "INSTRUCTOR ONLY" -E -e "HW[0-9]+ SOLUTION" . | grep -v "^./scripts/lint_examples.sh$" | grep -q .; then
+  grep -rlI --exclude-dir=.git -e "INSTRUCTOR ONLY" -E -e "HW[0-9]+ SOLUTION" . | grep -v "^./scripts/lint_examples.sh$" | sed 's/^/!! solution marker in a PUBLIC repo: /' >&2
   fail=1
 fi
 
