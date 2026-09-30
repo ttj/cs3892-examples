@@ -1,7 +1,7 @@
 # HW2 — Temporal logic and model checking
 
 Starters for [the HW2 handout](https://github.com/ttj/cs3892-fmstai-fall2026/blob/main/assignments/hw2.md).
-**Out Thu Oct 1 · due Thu Oct 15, 11:59 p.m.**
+**Out Thu Oct 1 · due Tue Oct 13, 11:59 p.m.**
 
 These are **starters, not solutions.** No file here states a verdict the homework asks
 you to predict, and the Part 2 model carries no specifications — the eight are yours.
