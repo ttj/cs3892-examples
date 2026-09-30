@@ -30,4 +30,5 @@ if __name__ == "__main__":
         print(f"  {p} pigeons into {h} holes: {r}")
     assert pigeonhole(5, 4).check().r == -1, "5 into 4 must be unsat"
     assert pigeonhole(4, 4).check().r == 1, "4 into 4 must be sat"
-    print("\nThe clause count is quadratic in `pigeons`. That is the wall.")
+    print("\nThe clause count only grows polynomially. The wall is that every resolution\n"
+          "proof of n+1 pigeons into n holes is exponential in n (Haken, 1985).")
