@@ -37,6 +37,13 @@ for f in sessions/*/smt2/*.smt2 homework/*/smt2/*.smt2; do
     echo "!! $f has no '; EXPECT:' contract in its header" >&2; fail=1; }
 done
 
+# Instructor-only solutions live in the private instructor repo and carry this
+# marker. This repository is public: refuse any file that has it.
+if grep -rlI --exclude-dir=.git -e "INSTRUCTOR ONLY" -e "HW2 SOLUTION" . | grep -v "^./scripts/lint_examples.sh$" | grep -q .; then
+  grep -rlI --exclude-dir=.git -e "INSTRUCTOR ONLY" -e "HW2 SOLUTION" . | grep -v "^./scripts/lint_examples.sh$" | sed 's/^/!! solution marker in a PUBLIC repo: /' >&2
+  fail=1
+fi
+
 echo
 [[ $fail -eq 0 ]] && echo "PASSED — $n example(s), all wired to a notebook and all contracted" \
                   || echo "FAILED" >&2
