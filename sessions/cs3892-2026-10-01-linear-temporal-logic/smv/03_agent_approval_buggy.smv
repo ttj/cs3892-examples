@@ -1,3 +1,4 @@
+-- FIGURE: figures/agent_buggy.svg   (the state machine, drawn -- scripts/draw_models.py)
 -- Session 11 -- English to LTL, and how it goes wrong.
 --
 -- An agent handles one task at a time. For each task it plans, then either

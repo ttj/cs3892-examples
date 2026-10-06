@@ -1,3 +1,4 @@
+-- FIGURE: figures/counter.svg   (the state machine, drawn -- scripts/draw_models.py)
 -- Session 11 -- the four LTL operators, one at a time, on the course's
 -- running example (cs3892-class/labs/running-example.md):
 --   x starts at 0, adds one while x < 10, and resets to 0 at the cap.

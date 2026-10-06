@@ -72,6 +72,16 @@ number nobody notices. `scripts/run_smt2.py` runs SMT-LIB through the Z3 Python
 bindings rather than a shell command, because the `z3-solver` pip wheel ships
 **no `z3` CLI** — this way Colab, CI and your laptop all behave identically.
 
+## Every transition system is drawn
+
+**The rule:** an example that is a transition system — SMV, or a Z3 unrolling of one — always
+comes with a graph of its state machine, and when the model has data variables every edge carries
+its **guard** and **update** (`x < 10 / x := x + 1`). The example declares its figure in a header
+line (`-- FIGURE: figures/counter.svg`, or `#` / `;` in Python and SMT-LIB), the figure lives in the
+session's `figures/` folder, and the notebook displays it. All figures are drawn from one place,
+`scripts/draw_models.py`. `lint_examples.sh` fails if an SMV model has no figure or its notebook
+does not show it. Homework starters are the one exception: drawing them would hand over an answer.
+
 ## Adding a session
 
 ```bash

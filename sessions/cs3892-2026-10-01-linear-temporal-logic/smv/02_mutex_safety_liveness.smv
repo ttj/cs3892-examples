@@ -1,3 +1,4 @@
+-- FIGURE: figures/mutex.svg   (the state machine, drawn -- scripts/draw_models.py)
 -- Session 11 -- safety versus liveness, on two processes sharing a lock.
 --
 -- Each process, a and b, cycles idle -> trying -> critical -> idle, and may

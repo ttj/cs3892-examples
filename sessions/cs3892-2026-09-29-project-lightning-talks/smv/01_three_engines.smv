@@ -1,3 +1,4 @@
+-- FIGURE: figures/counter.svg   (the state machine, drawn -- scripts/draw_models.py)
 -- One property, three engines. The running counter again (slides 5-8 of
 -- session 9): starts at 0, adds 1 while x < 10, resets to 0 at 10.
 --

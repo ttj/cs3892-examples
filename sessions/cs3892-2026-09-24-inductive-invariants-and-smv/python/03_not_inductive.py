@@ -1,3 +1,4 @@
+# FIGURE: figures/add2.svg   (the state machine, drawn -- scripts/draw_models.py)
 """Session 9, demo 3 -- invariant, but NOT inductive. The distinction, in one machine.
 
     I(x)      x = 0

@@ -1,4 +1,5 @@
 ; EXPECT: sat
+; FIGURE: figures/add2.svg   (the state machine, drawn -- scripts/draw_models.py)
 ; Session 9. The SAME consecution query for a machine where it FAILS.
 ;
 ;   I(x) = (x = 0),  T(x,x') = (x' = x + 2),  P(x) = (x /= 5)

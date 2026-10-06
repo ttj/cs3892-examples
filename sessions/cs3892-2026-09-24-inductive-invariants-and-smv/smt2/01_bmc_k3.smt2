@@ -1,4 +1,5 @@
 ; EXPECT: unsat
+; FIGURE: figures/counter.svg   (the state machine, drawn -- scripts/draw_models.py)
 ; Session 9. The BMC query for the CANONICAL counter at k = 3, written out
 ; by hand so the shape is visible with nothing hidden behind notation.
 ;

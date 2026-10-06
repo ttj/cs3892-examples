@@ -1,3 +1,4 @@
+# FIGURE: figures/thermostat.svg   (the state machine, drawn -- scripts/draw_models.py)
 """Session 8, demo 2 -- bounded reachability: a system becomes one formula.
 
 THE MOVE. A transition system has runs; a solver decides one fixed formula.

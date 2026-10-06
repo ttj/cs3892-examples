@@ -1,3 +1,4 @@
+-- FIGURE: figures/counter.svg   (the state machine, drawn -- scripts/draw_models.py)
 -- The course's running counter in the SMV language (NuSMV / nuXmv).
 --
 -- Same machine as every other file in this folder, written the way a model

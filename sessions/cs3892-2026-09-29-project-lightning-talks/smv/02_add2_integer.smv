@@ -1,3 +1,4 @@
+-- FIGURE: figures/add2.svg   (the state machine, drawn -- scripts/draw_models.py)
 -- The add-2 counter from session 9, slides 19-22, over the UNBOUNDED integers.
 -- nuXmv only: `integer` is an infinite type, which needs its SMT engine.
 -- NuSMV rejects this file; that is expected.

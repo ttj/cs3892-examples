@@ -37,6 +37,26 @@ for f in sessions/*/smt2/*.smt2 homework/*/smt2/*.smt2; do
     echo "!! $f has no '; EXPECT:' contract in its header" >&2; fail=1; }
 done
 
+# THE STATE-MACHINE RULE. A transition-system example shown in slides or Colab
+# always comes with a graph of its state machine -- guards and updates on the
+# edges when it has data variables. Every SMV model must declare one with a
+# header line  `-- FIGURE: figures/<name>.svg`  (Python / SMT-LIB examples of a
+# transition system use `# FIGURE:` / `; FIGURE:`), the figure must exist, and
+# the session's notebook must display it. Figures are drawn by
+# scripts/draw_models.py. Homework starters are exempt on purpose: HW2 Part 1
+# asks students to derive the transition relation themselves.
+for f in sessions/*/smv/*.smv; do
+  [[ -e "$f" ]] || continue
+  grep -qE '^\s*--\s*FIGURE:' "$f" || { echo "!! $f is a transition system with no FIGURE: header (draw it: scripts/draw_models.py)" >&2; fail=1; }
+done
+for f in $(grep -lE '^\s*(--|;|#)\s*FIGURE:' sessions/*/smv/*.smv sessions/*/python/*.py sessions/*/smt2/*.smt2 2>/dev/null); do
+  sess="${f#sessions/}"; sess="${sess%%/*}"
+  fig=$(grep -m1 -oE 'FIGURE:\s*\S+' "$f" | sed -E 's/FIGURE:\s*//')
+  [[ -f "sessions/$sess/$fig" ]] || { echo "!! $f declares $fig, which does not exist" >&2; fail=1; continue; }
+  grep -qF "$(basename "$fig")" "notebooks/$sess.ipynb" 2>/dev/null \
+    || { echo "!! notebooks/$sess.ipynb never displays $(basename "$fig") (declared by $f)" >&2; fail=1; }
+done
+
 # Instructor-only solutions live in the private instructor repo and carry this
 # marker. This repository is public: refuse any file that has it.
 if grep -rlI --exclude-dir=.git -e "INSTRUCTOR ONLY" -E -e "HW[0-9]+ SOLUTION" . | grep -v "^./scripts/lint_examples.sh$" | grep -q .; then

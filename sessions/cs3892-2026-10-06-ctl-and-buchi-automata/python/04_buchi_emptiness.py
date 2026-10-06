@@ -1,3 +1,4 @@
+# FIGURE: figures/agent.svg   (the state machine, drawn -- scripts/draw_models.py)
 """Session 12 -- LTL model checking the automata way, small enough to read.
 
 The recipe the model checker follows for an LTL property phi:

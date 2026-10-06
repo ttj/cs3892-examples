@@ -1,4 +1,5 @@
 ; EXPECT: unsat
+; FIGURE: figures/thermostat.svg   (the state machine, drawn -- scripts/draw_models.py)
 ; The same thermostat one step shorter -- and this is the slide that matters.
 ;
 ; `unsat` here does NOT mean the thermostat is safe. It means no counterexample

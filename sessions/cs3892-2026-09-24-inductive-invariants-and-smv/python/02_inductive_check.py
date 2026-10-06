@@ -1,3 +1,4 @@
+# FIGURE: figures/counter.svg   (the state machine, drawn -- scripts/draw_models.py)
 """Session 9, demo 2 -- two queries that settle every k at once.
 
 BMC asks "is there a bad run of length <= k?" once per k, forever. Induction

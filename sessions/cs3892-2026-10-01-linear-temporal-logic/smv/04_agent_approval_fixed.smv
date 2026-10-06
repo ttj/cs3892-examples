@@ -1,3 +1,4 @@
+-- FIGURE: figures/agent_fixed.svg   (the state machine, drawn -- scripts/draw_models.py)
 -- Session 11 -- strong versus weak "until", on the FIXED agent.
 --
 -- Same agent as 03_agent_approval_buggy.smv, minus the shortcut: from plan

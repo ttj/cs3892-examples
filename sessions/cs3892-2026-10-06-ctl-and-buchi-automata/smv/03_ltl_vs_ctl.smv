@@ -1,3 +1,4 @@
+-- FIGURE: figures/three_state.svg   (the state machine, drawn -- scripts/draw_models.py)
 -- Session 12 -- LTL and CTL are incomparable: each says something the other cannot.
 --
 -- A three-state machine. From s0 it may stay in s0 or step to s1; s1 always

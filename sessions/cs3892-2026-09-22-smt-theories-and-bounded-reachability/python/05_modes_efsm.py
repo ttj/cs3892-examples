@@ -1,3 +1,4 @@
+# FIGURE: figures/modes_efsm.svg   (the state machine, drawn -- scripts/draw_models.py)
 """Session 8, demo 5 -- the two-mode machine, encoded exactly as drawn.
 
 This is the extended state machine on slide 20, taken from ttj/fmaiv,

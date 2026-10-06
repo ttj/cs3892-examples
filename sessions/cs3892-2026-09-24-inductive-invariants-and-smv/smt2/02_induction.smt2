@@ -1,4 +1,5 @@
 ; EXPECT: unsat
+; FIGURE: figures/counter.svg   (the state machine, drawn -- scripts/draw_models.py)
 ; Session 9. CONSECUTION for the canonical counter -- the query that settles
 ; every k at once, and the one with no k in it anywhere.
 ;

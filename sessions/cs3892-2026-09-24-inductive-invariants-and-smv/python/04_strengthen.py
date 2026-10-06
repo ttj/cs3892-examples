@@ -1,3 +1,4 @@
+# FIGURE: figures/add2.svg   (the state machine, drawn -- scripts/draw_models.py)
 """Session 9, demo 4 -- strengthening: make the invariant STRONGER to make it provable.
 
 03 failed because Inv = P admitted x = 3, which is not reachable. The cure is

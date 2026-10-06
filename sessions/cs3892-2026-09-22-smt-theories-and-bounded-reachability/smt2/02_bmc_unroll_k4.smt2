@@ -1,4 +1,5 @@
 ; EXPECT: sat
+; FIGURE: figures/thermostat.svg   (the state machine, drawn -- scripts/draw_models.py)
 ; Session 8, demo 2, written out by hand at k = 4 so the SHAPE is visible.
 ;
 ; The thermostat: t starts at 20, each step adds +3 or -1, and the property

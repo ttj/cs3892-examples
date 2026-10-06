@@ -1,3 +1,4 @@
+# FIGURE: figures/counter.svg   (the state machine, drawn -- scripts/draw_models.py)
 """Session 9, demo 1 -- the BMC encoding written out, one k at a time.
 
 Tuesday gave the shape:

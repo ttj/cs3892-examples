@@ -1,3 +1,4 @@
+-- FIGURE: figures/counter.svg   (the state machine, drawn -- scripts/draw_models.py)
 -- A first look at Thursday's LTL, on the same counter.
 --   G p      p holds at every step of every run            (safety)
 --   G F p    p holds infinitely often                      (liveness)
