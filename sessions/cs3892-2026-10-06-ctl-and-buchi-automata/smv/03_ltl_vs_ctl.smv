@@ -1,0 +1,35 @@
+-- Session 12 -- LTL and CTL are incomparable: each says something the other cannot.
+--
+-- A three-state machine. From s0 it may stay in s0 or step to s1; s1 always
+-- goes to s2, and s2 stays forever. p holds everywhere except s1.
+--
+--          +--+
+--          v  |
+--   -> [s0, p] ---> [s1, !p] ---> [s2, p] --+
+--                                   ^       |
+--                                   +-------+
+--
+-- F G p (LTL): every run eventually has p forever -- TRUE. A run either stays
+--   in s0 (p forever) or passes s1 once and settles in s2 (p forever).
+-- AF AG p (CTL, the "obvious" translation): on every path we reach a state from
+--   which p holds on ALL futures -- FALSE. The run that stays in s0 never gets
+--   there: from every s0, the branch to s1 is still open.
+-- No CTL formula expresses F G p; no LTL formula expresses AG EF p.
+
+MODULE main
+  VAR
+    s : {s0, s1, s2};
+  DEFINE
+    p := s != s1;
+  ASSIGN
+    init(s) := s0;
+    next(s) := case
+                 s = s0 : {s0, s1};
+                 s = s1 : s2;
+                 TRUE   : s2;
+               esac;
+
+  LTLSPEC F G p          -- true
+  SPEC    AF AG p        -- false
+  SPEC    AG EF (s = s2) -- true: from anywhere, s2 is still reachable
+  LTLSPEC F (s = s2)     -- false: the run that stays in s0 -- LTL cannot say "still possible"

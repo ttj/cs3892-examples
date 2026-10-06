@@ -1,0 +1,48 @@
+-- Session 12 -- CTL: the path quantifier made explicit.
+--
+-- The agent from session 11 (04_agent_approval_fixed.smv): per task it plans,
+-- then asks a human or abandons the task; a "yes" leads to the delete. Its
+-- runs BRANCH -- at plan and at ask there is a choice -- so it has a
+-- computation TREE, and CTL asks questions about that tree:
+--
+--   E  "on SOME path from here"        A  "on EVERY path from here"
+--   X next   F eventually   G always   U until     -- each must follow an E or A
+--
+-- E [p U q] and A [p U q] are in 02_ctl_until.smv: smvis's parser does not
+-- accept the bracketed until, and this file is the one to load in smvis.
+--
+-- Every formula is judged at the initial state (step = plan). NuSMV prints
+-- CTL results first, in file order.
+
+MODULE main
+  VAR
+    step     : {plan, ask, act, abort, done};
+    approved : boolean;               -- this step's action was approved by a human
+  DEFINE
+    del := step = act;                -- the irreversible action happens now
+  ASSIGN
+    init(step)     := plan;
+    init(approved) := FALSE;
+    next(step) := case
+                    step = plan  : {ask, abort};
+                    step = ask   : {act, abort};        -- human: yes / no
+                    step = act   : done;
+                    step = abort : done;
+                    step = done  : plan;                -- next task
+                  esac;
+    next(approved) := step = ask & next(step) = act;
+
+  SPEC EX (step = ask)          -- true:  some successor of plan is ask
+  SPEC AX (step = ask)          -- false: abort is also a successor
+  SPEC EF del                   -- true:  some path reaches a delete
+  SPEC AF del                   -- false: the path that abandons every task never does
+  SPEC EG !del                  -- true:  ...and that path exists
+  SPEC AG !del                  -- false: not every path avoids the delete
+  SPEC AG EF del                -- true:  from every reachable state a delete is still POSSIBLE
+  SPEC AG AF del                -- false: it is never PROMISED
+  SPEC AG (del -> approved)     -- true:  the safety property of session 11, in CTL
+
+  -- The same agent in LTL, for the Buchi section (04_buchi_emptiness.py builds
+  -- these automata by hand). NuSMV prints these after every CTL result.
+  LTLSPEC G F del               -- false: the run that abandons every task
+  LTLSPEC G (del -> approved)   -- true

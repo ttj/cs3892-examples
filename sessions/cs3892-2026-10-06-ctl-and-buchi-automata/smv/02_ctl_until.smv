@@ -1,0 +1,38 @@
+-- Session 12 -- CTL's until, on the same agent as 01_ctl_on_the_agent.smv.
+-- Run in NuSMV / nuXmv / Colab. (smvis cannot parse E [ p U q ].)
+--
+-- The agent from session 11 (04_agent_approval_fixed.smv): per task it plans,
+-- then asks a human or abandons the task; a "yes" leads to the delete. Its
+-- runs BRANCH -- at plan and at ask there is a choice -- so it has a
+-- computation TREE, and CTL asks questions about that tree:
+--
+--   E  "on SOME path from here"        A  "on EVERY path from here"
+--   X next   F eventually   G always   U until     -- each must follow an E or A
+--
+-- E [p U q] and A [p U q] are in 02_ctl_until.smv: smvis's parser does not
+-- accept the bracketed until, and this file is the one to load in smvis.
+--
+-- Every formula is judged at the initial state (step = plan). NuSMV prints
+-- CTL results first, in file order.
+
+MODULE main
+  VAR
+    step     : {plan, ask, act, abort, done};
+    approved : boolean;               -- this step's action was approved by a human
+  DEFINE
+    del := step = act;                -- the irreversible action happens now
+  ASSIGN
+    init(step)     := plan;
+    init(approved) := FALSE;
+    next(step) := case
+                    step = plan  : {ask, abort};
+                    step = ask   : {act, abort};        -- human: yes / no
+                    step = act   : done;
+                    step = abort : done;
+                    step = done  : plan;                -- next task
+                  esac;
+    next(approved) := step = ask & next(step) = act;
+
+  SPEC E [ !del U del ]         -- true:  some path avoids del until it deletes
+  SPEC A [ !del U del ]         -- false: A-until needs del on EVERY path, and one path abandons forever
+  SPEC A [ !del U (del | step = abort) ]   -- true: every path ends the task, one way or the other
