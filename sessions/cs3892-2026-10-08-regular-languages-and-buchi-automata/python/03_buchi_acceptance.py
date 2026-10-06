@@ -106,7 +106,8 @@ for name, nba, sem in (("END_D as Buchi = G F d", END_D, GF_d),
     print(f"  {name:26} agrees with its meaning on all {len(L)}")
 
 for u, v in (("", "nd"), ("d", "n"), ("dd", "n"), ("", "dn")):
-    print(f"  {u + "(" + v + ")^w":9}  G F d {GF_d(u, v)!s:5}  F G n {FG_n(u, v)!s:5}  even-d {EVEN(u, v)}")
+    w = u + "(" + v + ")^w"
+    print(f"  {w:9}  G F d {GF_d(u, v)!s:5}  F G n {FG_n(u, v)!s:5}  even-d {EVEN(u, v)}")
 
 # 4. Search every COMPLETE deterministic Buchi automaton with k <= 3 states.
 #    Disagreeing on one lasso is a proof that an automaton does not recognize
