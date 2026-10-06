@@ -3,6 +3,10 @@
 Session 12 — CTL and the path quantifiers; `EF` versus `AF`; why LTL and CTL are incomparable;
 Büchi automata and the automata-theoretic view of LTL model checking.
 
+The model for most of the session — session 11's agent as a transition system:
+
+![The agent: plan goes to ask or abort; ask goes to act (the delete) on yes or abort on no; act and abort go to done; done returns to plan.](figures/agent.svg)
+
 | File | Shows | Verdicts | Tool |
 |---|---|---|---|
 | `smv/01_ctl_on_the_agent.smv` | the eight common CTL forms on session 11's agent, plus two LTL properties for the Büchi section | `EX` `EF` `EG` `AG EF` true · `AX` `AF` `AG` `AG AF` false · `G F del` false | NuSMV / nuXmv / **smvis** |

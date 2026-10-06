@@ -4,6 +4,10 @@ Session 11 — linear temporal logic: `X`, `G`, `F`, `U`; safety versus liveness
 writing English requirements as formulas, and the ways that goes wrong; temporal
 properties over agent logs.
 
+The agent of `03`/`04` as a transition system — the dashed edge is the bug that `03` has and `04` does not:
+
+![The agent: plan goes to ask or abort; ask goes to act on yes or abort on no; act and abort go to done; done returns to plan. A dashed red edge from plan straight to act is the shortcut bug.](figures/agent_buggy.svg)
+
 | File | Shows | Verdicts | Tool |
 |---|---|---|---|
 | `smv/01_counter_operators.smv` | the four operators on the running example (one run: 0 … 10, 0 …) | `X`, `G`, `F`, `U` true · `(x < 5) U (x = 10)` false · `G F` true · `F G` false | NuSMV / nuXmv |
