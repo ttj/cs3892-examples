@@ -93,7 +93,7 @@ FIG = {
 ''',
 }
 FIG["agent_buggy"] = FIG["agent"] + '''
-  plan -> act [label="BUG: shortcut, no one asked", color="#c0392b", fontcolor="#c0392b", style=dashed];
+  plan -> act [label="BUG: shortcut / approved := false", color="#c0392b", fontcolor="#c0392b", style=dashed];
 '''
 FIG["agent_fixed"] = FIG["agent"]
 
