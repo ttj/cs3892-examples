@@ -13,10 +13,13 @@ that differ always differ on some lasso, so lassos are the right test words.
        exactly the words with infinitely many d:  G F d.
     2. F G n -- "eventually, no more deletes" -- needs a GUESS: an NBA.
     3. "d at every even position" -- omega-regular, but no LTL formula says it.
-    4. No deterministic Buchi automaton with at most 3 states accepts F G n:
-       every one of them disagrees with F G n on some short lasso. (For every
-       size, this is Landweber's theorem, 1969 -- slide "Nondeterminism now
-       matters".) The same search finds deterministic ones for G F d at once.
+    4. No complete deterministic Buchi automaton with at most 3 states accepts
+       F G n: every one of them disagrees with F G n on some short lasso, so
+       none of them can recognize it. (A partial one can be completed with a
+       rejecting sink, so the bound covers those too, at one state more. For
+       every size, no deterministic Buchi automaton recognizes F G n at all:
+       Landweber, 1969.) For contrast, the same search finds automata that
+       agree with G F d on every test lasso -- END_D is one.
 
 Expected: the assertions at the bottom hold.
 """
@@ -105,9 +108,11 @@ for name, nba, sem in (("END_D as Buchi = G F d", END_D, GF_d),
 for u, v in (("", "nd"), ("d", "n"), ("dd", "n"), ("", "dn")):
     print(f"  {u + "(" + v + ")^w":9}  G F d {GF_d(u, v)!s:5}  F G n {FG_n(u, v)!s:5}  even-d {EVEN(u, v)}")
 
-# 4. Search every deterministic Buchi automaton with k <= 3 states.
+# 4. Search every COMPLETE deterministic Buchi automaton with k <= 3 states.
+#    Disagreeing on one lasso is a proof that an automaton does not recognize
+#    the language; agreeing on all of them is only evidence.
 L4 = list(lassos(4, 4))
-print(f"\nevery deterministic Buchi automaton over {{d, n}} with k states, "
+print(f"\nevery complete deterministic Buchi automaton over {{d, n}} with k states, "
       f"tested on {len(L4)} lassos:")
 for k in (1, 2, 3):
     states = range(k)
@@ -123,7 +128,7 @@ for k in (1, 2, 3):
                     fg += 1
                 if all(dba_accepts(0, acc, delta, u, v) == GF_d(u, v) for u, v in L4):
                     gf += 1
-    print(f"  k = {k}: {total:5} automata   accept F G n: {fg}   accept G F d: {gf}")
+    print(f"  k = {k}: {total:5} automata   agree with F G n: {fg}   agree with G F d: {gf}")
     assert fg == 0
     assert (gf > 0) == (k >= 2)
 
