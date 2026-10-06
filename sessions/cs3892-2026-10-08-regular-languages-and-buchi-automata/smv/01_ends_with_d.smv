@@ -1,0 +1,31 @@
+-- FIGURE: figures/dfa_ends_d.svg   (the automaton, drawn -- scripts/draw_models.py)
+-- Session 13 -- an automaton IS a transition system: one that reads its input.
+--
+-- `letter` is left unconstrained, so the runs of this model are ALL the
+-- infinite words over {d, n}; `q` is the state of the automaton END_D
+-- ("the last letter was a delete") as it reads them. One graph, read two ways:
+--
+--   finite words:    accept if the run ENDS in q1               (d|n)* d
+--   infinite words:  accept if the run visits q1 INFINITELY OFTEN   G F d
+--
+-- The second reading is Buchi acceptance, and NuSMV can check it against the
+-- LTL formula it should mean. NuSMV prints LTL results in file order.
+
+MODULE main
+  VAR
+    letter : {d, n};      -- the input: anything, at every step
+    q      : {q0, q1};    -- END_D's state: q1 = the letter just read was d
+  ASSIGN
+    init(q) := q0;
+    next(q) := case
+                 letter = d : q1;
+                 TRUE       : q0;
+               esac;
+
+  -- q1 exactly when the previous letter was a delete
+  LTLSPEC G ((letter = d) <-> X (q = q1))                   -- true
+  -- Buchi acceptance -- q1 infinitely often -- is exactly G F d
+  LTLSPEC (G F (q = q1)) <-> (G F (letter = d))             -- true
+  -- ...and not every infinite word is accepted. The counterexample is a word
+  -- u (v)^omega whose loop v has no d in it.
+  LTLSPEC G F (q = q1)                                      -- false

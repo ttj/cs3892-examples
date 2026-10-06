@@ -92,6 +92,75 @@ FIG = {
   done -> plan [constraint=false];
 ''',
 }
+# Automata (session 13): circles, accepting states doubled, edges labelled by
+# the letter read -- the letter IS the guard.
+AUT = '''
+  node [shape=circle, fixedsize=true, width=0.62, margin=0];
+  edge [fontname="Courier", fontsize=14];
+'''
+ACC = 'shape=doublecircle, fillcolor="#e3e9fb", color="#2f55d4"'
+FIG.update({
+    "dfa_ends_d": AUT + f'''
+  label="END_D. Finite words: accept if the run ENDS in q1 -- (d|n)* d.\\nInfinite words (Buchi): accept if q1 comes back INFINITELY OFTEN -- G F d.";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  q0; q1 [{ACC}];
+  start -> q0;
+  q0 -> q0 [label="n"]; q0 -> q1 [label="d"];
+  q1 -> q1 [label="d"]; q1 -> q0 [label="n"];
+''',
+    "dfa_even_d": AUT + f'''
+  label="EVEN_D - an even number of d (a parity bit)";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  e [{ACC}]; o;
+  start -> e;
+  e -> e [label="n"]; e -> o [label="d"];
+  o -> o [label="n"]; o -> e [label="d"];
+''',
+    "product_end_even": AUT + f'''
+  label="END_D x EVEN_D, run in lockstep: accept when BOTH accept -- ends with d, and an even number of d";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  node [width=0.9];
+  q0e [label="q0, e"]; q1o [label="q1, o"]; q0o [label="q0, o"]; q1e [label="q1, e", {ACC}];
+  start -> q0e;
+  q0e -> q0e [label="n"]; q0e -> q1o [label="d"];
+  q1o -> q0o [label="n"]; q1o -> q1e [label="d"];
+  q0o -> q0o [label="n"]; q0o -> q1e [label="d"];
+  q1e -> q0e [label="n"]; q1e -> q1o [label="d"];
+''',
+    "nfa_second_last": AUT + f'''
+  label="An NFA for (d|n)* d (d|n): it GUESSES which d is second-to-last. Accept if SOME run ends in p2.";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  p0; p1; p2 [{ACC}];
+  start -> p0;
+  p0 -> p0 [label="d, n"]; p0 -> p1 [label="d  (the guess)"]; p1 -> p2 [label="d, n"];
+''',
+    "dfa_second_last": AUT + f'''
+  label="The subset construction: DFA states are SETS of NFA states. 4 = 2^2 states, all of them needed.";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  node [width=1.05, fontsize=12];
+  a [label="{{p0}}"]; b [label="{{p0,p1}}"]; c [label="{{p0,p1,p2}}", {ACC}]; e [label="{{p0,p2}}", {ACC}];
+  start -> a;
+  a -> a [label="n"]; a -> b [label="d"];
+  b -> c [label="d"]; b -> e [label="n"];
+  c -> c [label="d"]; c -> e [label="n"];
+  e -> b [label="d"]; e -> a [label="n"];
+''',
+    "nba_fg_n": AUT + f'''
+  label="F G n - eventually no more deletes. The jump to q1 GUESSES when; a d in q1 has no move, so that guess dies.\\nNo deterministic Buchi automaton accepts this language [Landweber 1969].";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  q0; q1 [{ACC}];
+  start -> q0;
+  q0 -> q0 [label="d, n"]; q0 -> q1 [label="n  (the guess)"]; q1 -> q1 [label="n"];
+''',
+    "dba_even_pos": AUT + f'''
+  label="d at every even position (0, 2, 4, ...): omega-regular, deterministic -- and no LTL formula says it [Wolper 1983]";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  e [{ACC}]; o;
+  start -> e;
+  e -> o [label="d"]; o -> e [label="d, n"];
+''',
+})
+
 FIG["agent_buggy"] = FIG["agent"] + '''
   plan -> act [label="BUG: shortcut / approved := false", color="#c0392b", fontcolor="#c0392b", style=dashed];
 '''
@@ -104,6 +173,8 @@ WHERE = {
     "cs3892-2026-09-29-project-lightning-talks": ["counter", "add2"],
     "cs3892-2026-10-01-linear-temporal-logic": ["counter", "mutex", "agent_buggy", "agent_fixed"],
     "cs3892-2026-10-06-ctl-and-buchi-automata": ["agent", "three_state"],
+    "cs3892-2026-10-08-regular-languages-and-buchi-automata": ["dfa_ends_d", "dfa_even_d", "product_end_even",
+        "nfa_second_last", "dfa_second_last", "nba_fg_n", "dba_even_pos", "agent"],
 }
 
 if __name__ == "__main__":
