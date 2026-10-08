@@ -127,6 +127,13 @@ FIG.update({
   q0o -> q0o [label="n"]; q0o -> q1e [label="d"];
   q1e -> q0e [label="n"]; q1e -> q1o [label="d"];
 ''',
+    "nfa_ends_d": AUT + f'''
+  label="An NFA for (d|n)* d, END_D's language: on a d it may GUESS that this is the last letter.\\nThe sets of states its runs can be in are {{p0}} and {{p0,p1}} -- END_D's q0 and q1.";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  p0; p1 [{ACC}];
+  start -> p0;
+  p0 -> p0 [label="d, n"]; p0 -> p1 [label="d  (the guess)"];
+''',
     "nfa_second_last": AUT + f'''
   label="An NFA for (d|n)* d (d|n): it GUESSES which d is second-to-last. Accept if SOME run ends in p2.";
   labelloc=b; fontname="Helvetica"; fontsize=12;
@@ -174,7 +181,7 @@ WHERE = {
     "cs3892-2026-10-01-linear-temporal-logic": ["counter", "mutex", "agent_buggy", "agent_fixed"],
     "cs3892-2026-10-06-ctl-and-buchi-automata": ["agent", "three_state"],
     "cs3892-2026-10-08-regular-languages-and-buchi-automata": ["dfa_ends_d", "dfa_even_d", "product_end_even",
-        "nfa_second_last", "dfa_second_last", "nba_fg_n", "dba_even_pos", "agent"],
+        "nfa_ends_d", "nfa_second_last", "dfa_second_last", "nba_fg_n", "dba_even_pos", "agent"],
 }
 
 if __name__ == "__main__":

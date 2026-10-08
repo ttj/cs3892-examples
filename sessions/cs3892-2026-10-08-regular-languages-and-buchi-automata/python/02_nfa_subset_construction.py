@@ -1,6 +1,10 @@
 # FIGURE: figures/nfa_second_last.svg   (the automata, drawn -- scripts/draw_models.py)
 """Session 13 -- nondeterminism on finite words, and why it costs nothing in power.
 
+First the session's own language, "ends with a delete", as an NFA that guesses
+which d is the last letter: its subset construction is END_D itself. Then a
+case where determinism costs something:
+
 "The second-to-last step was a delete": (d|n)* d (d|n).
 
 An NFA for it has 3 states. It GUESSES which d is the second-to-last letter;
@@ -76,6 +80,21 @@ def name(S):
 
 
 W = ["".join(w) for k in range(13) for w in itertools.product(SIGMA, repeat=k)]
+
+# --- The k = 1 case: the NFA for "ends with d" becomes END_D ------------------
+# p0 loops on d and n; on a d it may also jump to p1, guessing "this d is the
+# last letter". Tracking the SET of states some run could be in gives two sets,
+# {p0} and {p0,p1}, and with their moves they are exactly END_D's q0 and q1.
+N1 = kth_from_last(1)
+D1 = subset_construction(N1)
+assert all(nfa_accepts(N1, w) == bool(re.fullmatch(r"[dn]*d", w)) for w in W)
+S0, S01 = frozenset({0}), frozenset({0, 1})
+assert D1[2] == {S0: {"d": S01, "n": S0}, S01: {"d": S01, "n": S0}} and D1[1] == {S01}
+cur, trace = {0}, ["{p0}"]
+for a in "ndnd":
+    cur = set().union(*(N1[2].get((q, a), set()) for q in cur)); trace.append(name(cur))
+print("NFA for (d|n)* d on 'ndnd', the states some run could be in:", " -> ".join(trace))
+print("  its subset construction has 2 states, {p0} and {p0,p1}: it is END_D\n")
 
 # --- The k = 2 case: the slide ----------------------------------------------
 N2 = kth_from_last(2)
