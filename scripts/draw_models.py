@@ -168,6 +168,19 @@ FIG.update({
 ''',
 })
 
+FIG["mutex_composition"] = '''
+  label="S = M1 || M2, interleaved: a state is a PAIR (M1's state, M2's state). Each module alone has 2 states; S has 2 x 2 = 4.\\nThe two dashed moves are blocked by the guard, so (crit, crit) is never reached: mutual exclusion is a reachability fact.";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  ii [label="idle, idle"];
+  ci [label="crit, idle", fillcolor="#e3e9fb", color="#2f55d4"];
+  ic [label="idle, crit", fillcolor="#e3e9fb", color="#2f55d4"];
+  cc [label="crit, crit", fillcolor="#fbe4e4", color="#c0392b", style="rounded,filled,dashed"];
+  start -> ii;
+  ii -> ci [label="M1 enters"]; ci -> ii [label="M1 exits"];
+  ii -> ic [label="M2 enters"]; ic -> ii [label="M2 exits"];
+  ci -> cc [label="M2 blocked", style=dashed, color="#c0392b", fontcolor="#c0392b"];
+  ic -> cc [label="M1 blocked", style=dashed, color="#c0392b", fontcolor="#c0392b"];
+'''
 FIG["agent_buggy"] = FIG["agent"] + '''
   plan -> act [label="BUG: shortcut / approved := false", color="#c0392b", fontcolor="#c0392b", style=dashed];
 '''
@@ -181,7 +194,7 @@ WHERE = {
     "cs3892-2026-10-01-linear-temporal-logic": ["counter", "mutex", "agent_buggy", "agent_fixed"],
     "cs3892-2026-10-06-ctl-and-buchi-automata": ["agent", "three_state"],
     "cs3892-2026-10-08-regular-languages-and-buchi-automata": ["dfa_ends_d", "dfa_even_d", "product_end_even",
-        "nfa_ends_d", "nfa_second_last", "dfa_second_last", "nba_fg_n", "dba_even_pos", "agent"],
+        "nfa_ends_d", "nfa_second_last", "dfa_second_last", "mutex_composition", "nba_fg_n", "dba_even_pos", "agent"],
 }
 
 if __name__ == "__main__":

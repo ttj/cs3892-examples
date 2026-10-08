@@ -19,6 +19,7 @@ it accepts `(d|n)* d`. Read on infinite words, with Büchi acceptance, it accept
 | `python/02_nfa_subset_construction.py` | NFAs that guess: for END_D's own language the subset construction gives END_D back; for `(d\|n)* d (d\|n)` it costs states, and minimization shows the `2^k` blowup is unavoidable | 2-state NFA → END_D · 3-state NFA → 4-state DFA · `k + 1` NFA states → `2^k` minimal DFA states, for `k` = 1…8 | Python |
 | `python/03_buchi_acceptance.py` | Büchi acceptance on lasso words `u(v)^ω`: END_D read as Büchi is `G F d`; an NBA for `F G n`; "d at every even position" | all three agree with their meaning on 210 lassos · **no** complete deterministic Büchi automaton with ≤ 3 states accepts `F G n` (5832 searched, each refuted by a lasso), while 408 agree with `G F d` on every test lasso | Python |
 | `smv/01_ends_with_d.smv` | END_D as an SMV transition system reading an unconstrained input; NuSMV checks that its Büchi acceptance is `G F d` | true · true · `G F (q = q1)` false, counterexample `d (n)^ω` | NuSMV / nuXmv |
+| `smv/02_mutex_composition.smv` | parallel composition: two instances of one module, a scheduler that makes them interleave, and the composed system as one transition system over pairs of states | mutual exclusion true (the pair `crit, crit` is unreachable) · `EF crit` true for both · `AG EF` start true · `G F (m1.st = crit)` false, a lasso | NuSMV / nuXmv |
 
 The recipe itself, on the agent, is session 12's `python/04_buchi_emptiness.py`. The notebook
 runs it again and checks that NuSMV agrees.

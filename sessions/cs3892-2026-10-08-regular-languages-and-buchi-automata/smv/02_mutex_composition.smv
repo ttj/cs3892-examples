@@ -1,0 +1,37 @@
+-- FIGURE: figures/mutex_composition.svg   (the composed system, drawn -- scripts/draw_models.py)
+-- Session 13 -- parallel composition: two modules, one bigger transition system.
+--
+-- Each process alone is a two-state transition system: idle, crit. It enters
+-- crit only if the other is idle, and exits back to idle. The SYSTEM is the two
+-- together, S = M1 || M2, and S is itself a transition system whose states are
+-- PAIRS (m1.st, m2.st): 2 x 2 = 4 of them, 3 reachable.
+--
+-- SMV composes the instances in `main` SYNCHRONOUSLY: every next() fires on
+-- every step. The scheduler variable `turn` makes the composition INTERLEAVE --
+-- the process whose turn it is not simply keeps its state. (nuXmv has no
+-- `process` keyword; this is how asynchronous composition is written.)
+--
+-- "Never both in crit" is then a REACHABILITY question about one graph.
+-- NuSMV prints CTL results first, then LTL, then the invariant.
+
+MODULE proc(me, turn, other)
+  VAR st : {idle, crit};
+  ASSIGN
+    init(st) := idle;
+    next(st) := case
+                  turn != me               : st;     -- not my turn: stay
+                  st = idle & other = idle : crit;   -- enter, only if the other is idle
+                  st = crit                : idle;   -- exit
+                  TRUE                     : st;     -- blocked: wait
+                esac;
+
+MODULE main
+  VAR turn : 1..2;                  -- the scheduler: whose move it is
+      m1   : proc(1, turn, m2.st);
+      m2   : proc(2, turn, m1.st);
+
+  INVARSPEC !(m1.st = crit & m2.st = crit)        -- true: (crit, crit) is never reached
+  SPEC EF (m1.st = crit)                          -- true: m1 can get in
+  SPEC EF (m2.st = crit)                          -- true: so can m2
+  SPEC AG EF (m1.st = idle & m2.st = idle)        -- true: the start is always reachable again
+  LTLSPEC G F (m1.st = crit)                      -- false: the scheduler may never pick m1 -- a lasso
