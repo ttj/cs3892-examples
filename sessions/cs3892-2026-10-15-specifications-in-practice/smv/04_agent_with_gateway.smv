@@ -1,0 +1,63 @@
+-- FIGURE: figures/agent_gateway.svg   (the state machines, drawn -- scripts/draw_models.py)
+-- Session 15 -- do not fix the agent; put a monitor beside it.
+--
+--     S  =  Agent || Monitor          (synchronous composition, as in session 13)
+--
+-- The AGENT is session 11's buggy agent, shortcut and all. It is an LLM: we do
+-- not get to edit its transition relation, and we do not trust our model of it.
+--
+-- The MONITOR is one bit of memory: was the previous step a request for
+-- approval? It watches the agent's steps and never looks inside the agent.
+--
+-- The GATEWAY sits between the agent and the delete tool. When the agent
+-- reaches `act` it REQUESTS a delete; the delete is carried out only if the
+-- monitor's bit is set. A denied request does nothing, and the agent moves on.
+--
+-- What this buys, and what it does not:
+--   * the safety property holds of S -- although the agent is still buggy;
+--   * the agent still ASKS for the unapproved delete (and is refused);
+--   * nothing makes the agent finish a task: a monitor can refuse a call,
+--     it cannot make one happen. Liveness is not enforceable this way.
+
+MODULE agent
+  VAR
+    step : {plan, ask, act, abort, done};
+  ASSIGN
+    init(step) := plan;
+    next(step) := case
+                    step = plan  : {ask, abort, act};   -- the shortcut is still here
+                    step = ask   : {act, abort};        -- human: yes / no
+                    step = act   : done;
+                    step = abort : done;
+                    step = done  : plan;
+                  esac;
+
+MODULE monitor(asked)
+  VAR
+    fresh : boolean;                  -- the previous step was `ask`
+  ASSIGN
+    init(fresh) := FALSE;
+    next(fresh) := asked;
+
+MODULE main
+  VAR
+    a : agent;
+    m : monitor(a.step = ask);
+  DEFINE
+    asked    := a.step = ask;
+    del_req  := a.step = act;         -- the agent asks the gateway for a delete
+    del_done := del_req & m.fresh;    -- the gateway lets it through
+    denied   := del_req & !m.fresh;   -- the gateway refuses
+
+  -- (1) Safety, enforced. TRUE of S, with the buggy agent inside it.
+  LTLSPEC G (del_done -> Y asked)
+
+  -- (2) The agent still tries. FALSE: plan, act -- that request is `denied`.
+  LTLSPEC G (del_req -> Y asked)
+
+  -- (3) Every refused request is one the rule forbids, and only those. TRUE.
+  LTLSPEC G (denied <-> (del_req & !(Y asked)))
+
+  -- (4) Liveness. FALSE: for example plan, act (refused), done, forever --
+  --     or plan, abort, done, forever. No finite run shows this failing.
+  LTLSPEC G F del_done

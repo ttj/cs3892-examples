@@ -236,6 +236,40 @@ FIG.update({
 ''',
 })
 
+# Session 15: specifications in practice -- a monitor beside the agent.
+FIG["monitor_formerly"] = '''
+  label="What a gateway must remember to decide  `formerly within 1h ApproveSale::response{...}`  for one stock and amount:\\none location bit and one clock x. Every edge is  event [guard] / update, decision.  The policy text never mentions this machine.";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  none [label="no approval\\nin force"]; ok [label="approval in force\\n(clock x running)", ''' + BLUE + '''];
+  start -> none;
+  none -> none [label="sell / DENY", fontcolor="#c0392b"];
+  none -> ok [label="approve / x := 0"];
+  ok -> ok [label="approve / x := 0"];
+  ok -> ok [label="sell [x <= 3600] / ALLOW", fontcolor="#1b7a43"];
+  ok -> none [label="sell [x > 3600] / DENY", fontcolor="#c0392b"];
+'''
+FIG["agent_gateway"] = '''
+  label="S = Agent || Monitor. The agent is session 11's buggy agent, untouched. The monitor is one bit: was the previous step `ask`?\\nA state of S is a pair (step, fresh). The shortcut still exists -- it leads to (act, F), where the gateway REFUSES the delete.";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  subgraph cluster_s { label="S = Agent || Monitor (reachable part: 7 of 5 x 2 = 10 states)"; fontname="Helvetica"; color="#bbbbbb";
+    pF [label="plan, F"]; kF [label="ask, F"]; aT [label="act, T\\ndel DONE", fillcolor="#e4f4ea", color="#1b7a43"];
+    aF [label="act, F\\ndel REFUSED", fillcolor="#fbe4e4", color="#c0392b"]; bF [label="abort, F"]; bT [label="abort, T"]; dF [label="done, F"];
+    pF -> kF; pF -> bF; pF -> aF [label="shortcut", color="#c0392b", fontcolor="#c0392b", style=dashed];
+    kF -> aT [label="yes"]; kF -> bT [label="no"];
+    aT -> dF; aF -> dF; bF -> dF; bT -> dF; dF -> pF [constraint=false]; }
+  subgraph cluster_m { label="Monitor"; fontname="Helvetica"; color="#bbbbbb";
+    mF [label="fresh = F"]; mT [label="fresh = T", ''' + BLUE + '''];
+    mF -> mT [label="step = ask"]; mT -> mF [label="step != ask"]; mF -> mF [label="step != ask"]; mT -> mT [label="step = ask"]; }
+  subgraph cluster_a { label="Agent (untrusted)"; fontname="Helvetica"; color="#bbbbbb";
+    plan; ask; act [label="act\\n(requests del)", ''' + BLUE + ''']; abort; done;
+    plan -> ask; plan -> abort; ask -> act [label="yes"]; ask -> abort [label="no"]; act -> done; abort -> done;
+    plan -> act [label="shortcut", color="#c0392b", fontcolor="#c0392b", style=dashed];
+    done -> plan [constraint=false]; }
+  start -> plan;
+  start4 [shape=point, width=0.12, color="#2f55d4", fillcolor="#2f55d4", label=""]; start4 -> mF;
+  start5 [shape=point, width=0.12, color="#2f55d4", fillcolor="#2f55d4", label=""]; start5 -> pF;
+'''
+
 FIG["agent_buggy"] = FIG["agent"] + '''
   plan -> act [label="BUG: shortcut / approved := false", color="#c0392b", fontcolor="#c0392b", style=dashed];
 '''
@@ -252,6 +286,7 @@ WHERE = {
         "nfa_ends_d", "nfa_second_last", "dfa_second_last", "mutex_composition", "nba_fg_n", "dba_even_pos", "agent"],
     "cs3892-2026-10-13-equivalence-simulation-and-bisimulation": ["vending_late", "vending_early", "fair_jams",
         "ends_d3", "agent_abstraction"],
+    "cs3892-2026-10-15-specifications-in-practice": ["agent_buggy", "agent_gateway", "monitor_formerly"],
 }
 
 if __name__ == "__main__":

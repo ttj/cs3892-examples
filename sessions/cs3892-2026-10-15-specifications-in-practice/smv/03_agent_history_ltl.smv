@@ -1,0 +1,55 @@
+-- FIGURE: figures/agent_buggy.svg   (the state machine, drawn -- scripts/draw_models.py)
+-- Session 15 -- the same requirement, written about the PAST.
+--
+-- Session 11's buggy agent, unchanged: for each task it plans, then asks a
+-- human or abandons the task -- or takes the "urgent" shortcut straight to the
+-- delete. The requirement, in English:
+--     "The agent never deletes anything a human has not approved."
+--
+-- LTL also has past-time operators. NuSMV writes them
+--     Y p      "yesterday": p held one step ago
+--     O p      "once": p held at some step up to now
+--     p S q    "since": q held at some step, and p has held ever since
+-- They add no expressive power to LTL, but a rule about what must already
+-- have happened reads as it is spoken.
+--
+-- In session 11 the model carried a history variable, `approved`. Property (b)
+-- shows what that variable was: one bit of memory about the previous step --
+-- a monitor, written inside the model.
+
+MODULE main
+  VAR
+    step     : {plan, ask, act, abort, done};
+    approved : boolean;               -- this step's action was approved by a human
+  DEFINE
+    del   := step = act;              -- the irreversible action happens now
+    asked := step = ask;              -- the agent is asking the human
+  ASSIGN
+    init(step)     := plan;
+    init(approved) := FALSE;
+    next(step) := case
+                    step = plan  : {ask, abort, act};   -- BUG: plan -> act
+                    step = ask   : {act, abort};        -- human: yes / no
+                    step = act   : done;
+                    step = abort : done;
+                    step = done  : plan;                -- next task
+                  esac;
+    next(approved) := step = ask & next(step) = act;
+
+  -- (a) Session 11's formalization. FALSE: plan, act.
+  LTLSPEC G (del -> approved)
+
+  -- (b) What `approved` is: the delete came straight from asking. TRUE.
+  LTLSPEC G (approved <-> (del & Y asked))
+
+  -- (c) So the same requirement needs no extra variable. FALSE, same run.
+  LTLSPEC G (del -> Y asked)
+
+  -- (d) "Asked at SOME earlier step." FALSE on the first task: plan, act.
+  LTLSPEC G (del -> O asked)
+
+  -- (e) But (d) is too weak a rule to enforce. FALSE: plan, ask, abort, done,
+  --     plan, act -- the delete has an "earlier ask", from a task that is over
+  --     (and in this run the human even said no). Without a window, one ask
+  --     would cover every delete that ever follows it.
+  LTLSPEC G ((del & O asked) -> Y asked)
