@@ -1,0 +1,26 @@
+-- FIGURE: figures/agent_abstraction.svg   (the state machines, drawn -- scripts/draw_models.py)
+-- Session 14 -- the agent itself (the model of sessions 11-13), with the two
+-- properties of 06_agent_abstract.smv.
+--
+-- Both hold here. The first also held on the two-state abstraction, which is
+-- how we would have known without building this model. The second FAILED on
+-- the abstraction with the run  del, quiet, del  -- a run this agent does not
+-- have: from act it goes to done, then plan, then ask, before it can act again.
+
+MODULE main
+  VAR
+    step : {plan, ask, act, abort, done};
+  DEFINE
+    del := step = act;
+  ASSIGN
+    init(step) := plan;
+    next(step) := case
+                    step = plan  : {ask, abort};
+                    step = ask   : {act, abort};
+                    step = act   : done;
+                    step = abort : done;
+                    step = done  : plan;
+                  esac;
+
+  LTLSPEC G (del -> X !del)                                   -- true
+  LTLSPEC G (del -> (X !del & X X !del))                      -- true: the abstraction's counterexample was spurious

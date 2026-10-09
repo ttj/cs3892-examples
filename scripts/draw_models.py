@@ -181,6 +181,61 @@ FIG["mutex_composition"] = '''
   ci -> cc [label="M2 blocked", style=dashed, color="#c0392b", fontcolor="#c0392b"];
   ic -> cc [label="M1 blocked", style=dashed, color="#c0392b", fontcolor="#c0392b"];
 '''
+# Session 14: equivalence, simulation, bisimulation.
+BLUE = 'fillcolor="#e3e9fb", color="#2f55d4"'
+FIG.update({
+    "vending_late": '''
+  label="LATE: takes the coin, THEN lets you choose. From `paid` both drinks are still possible.";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  idle; paid [''' + BLUE + ''']; coffee; tea;
+  start -> idle;
+  idle -> paid [label="coin"];
+  paid -> coffee [label="choose"]; paid -> tea [label="choose"];
+  coffee -> idle; tea -> idle;
+''',
+    "vending_early": '''
+  label="EARLY: commits to a drink AS it takes the coin. Both paid states show `paid`.\\nSame traces as LATE -- no LTL formula tells them apart -- but not bisimilar.";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  idle; paid_c [label="paid_c\\n(shows: paid)", ''' + BLUE + ''']; paid_t [label="paid_t\\n(shows: paid)", ''' + BLUE + ''']; coffee; tea;
+  start -> idle;
+  idle -> paid_c [label="coin"]; idle -> paid_t [label="coin"];
+  paid_c -> coffee; paid_t -> tea;
+  coffee -> idle; tea -> idle;
+''',
+    "fair_jams": '''
+  label="FAIR and JAMS simulate EACH OTHER -- FAIR's paid can wait as long as stuck does -- and are still NOT bisimilar:\\nno state of FAIR behaves like stuck, which can never serve.";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  subgraph cluster_f { label="FAIR"; fontname="Helvetica"; color="#bbbbbb";
+    f_idle [label="idle"]; f_paid [label="paid", ''' + BLUE + ''']; f_coffee [label="coffee"];
+    f_idle -> f_paid [label="coin"]; f_paid -> f_paid [label="wait"]; f_paid -> f_coffee [label="serve"]; f_coffee -> f_idle; }
+  subgraph cluster_j { label="JAMS"; fontname="Helvetica"; color="#bbbbbb";
+    j_idle [label="idle"]; j_ok [label="ok\\n(shows: paid)", ''' + BLUE + ''']; j_stuck [label="stuck\\n(shows: paid)", fillcolor="#fbe4e4", color="#c0392b"]; j_coffee [label="coffee"];
+    j_idle -> j_ok [label="coin"]; j_idle -> j_stuck [label="coin"]; j_ok -> j_ok [label="wait"]; j_ok -> j_coffee [label="serve"];
+    j_stuck -> j_stuck [label="wait"]; j_coffee -> j_idle; }
+  start -> f_idle; start2 [shape=point, width=0.12, color="#2f55d4", fillcolor="#2f55d4", label=""]; start2 -> j_idle;
+''',
+    "ends_d3": AUT + f'''
+  label="END_D3: three states for 'ends with d'. q0 and q2 are bisimilar -- same acceptance, same moves into the same classes --\\nso partition refinement merges them, and the quotient is the two-state END_D of session 13.";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  q0 [fillcolor="#eeeeea"]; q2 [fillcolor="#eeeeea"]; q1 [{ACC}];
+  start -> q0;
+  q0 -> q2 [label="n"]; q0 -> q1 [label="d"];
+  q2 -> q0 [label="n"]; q2 -> q1 [label="d"];
+  q1 -> q1 [label="d"]; q1 -> q2 [label="n"];
+''',
+    "agent_abstraction": '''
+  label="The agent (five states) and its abstraction under h: act -> del, everything else -> quiet. An abstract edge h(s) -> h(t) for every\\nagent edge s -> t, so the abstraction SIMULATES the agent. The dashed path del, quiet, del is spurious: the agent has no such run.";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  subgraph cluster_c { label="the agent"; fontname="Helvetica"; color="#bbbbbb";
+    plan; ask; act [label="act - del", ''' + BLUE + ''']; abort; done;
+    plan -> ask; plan -> abort; ask -> act [label="yes"]; ask -> abort [label="no"]; act -> done; abort -> done; done -> plan [constraint=false]; }
+  subgraph cluster_a { label="the abstraction"; fontname="Helvetica"; color="#bbbbbb";
+    quiet; del [''' + BLUE + '''];
+    quiet -> quiet; quiet -> del [color="#c0392b", style=dashed]; del -> quiet [color="#c0392b", style=dashed]; }
+  start -> plan; start3 [shape=point, width=0.12, color="#2f55d4", fillcolor="#2f55d4", label=""]; start3 -> quiet;
+''',
+})
+
 FIG["agent_buggy"] = FIG["agent"] + '''
   plan -> act [label="BUG: shortcut / approved := false", color="#c0392b", fontcolor="#c0392b", style=dashed];
 '''
@@ -195,6 +250,8 @@ WHERE = {
     "cs3892-2026-10-06-ctl-and-buchi-automata": ["agent", "three_state"],
     "cs3892-2026-10-08-regular-languages-and-buchi-automata": ["dfa_ends_d", "dfa_even_d", "product_end_even",
         "nfa_ends_d", "nfa_second_last", "dfa_second_last", "mutex_composition", "nba_fg_n", "dba_even_pos", "agent"],
+    "cs3892-2026-10-13-equivalence-simulation-and-bisimulation": ["vending_late", "vending_early", "fair_jams",
+        "ends_d3", "agent_abstraction"],
 }
 
 if __name__ == "__main__":

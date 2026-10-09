@@ -1,0 +1,37 @@
+-- FIGURE: figures/vending_early.svg   (the state machine, drawn -- scripts/draw_models.py)
+-- Session 14 -- the other vending machine: it commits to a drink AS IT TAKES THE COIN.
+--
+-- `paid_c` and `paid_t` both show "paid" to the outside, but from paid_c only
+-- coffee can follow, and from paid_t only tea. Its runs read exactly like those
+-- of 01_vending_late_choice.smv -- idle paid (coffee | tea) idle paid ... -- so
+-- the two machines are TRACE EQUIVALENT and every LTL verdict agrees.
+--
+-- They are NOT bisimilar: 01 has a `paid` state from which both drinks are
+-- possible, and nothing here matches it. CTL sees that; LTL cannot.
+--
+-- NuSMV prints CTL results first, then LTL.
+
+MODULE main
+  VAR
+    st : {idle, paid_c, paid_t, coffee, tea};
+  DEFINE
+    paid := st = paid_c | st = paid_t;      -- what an observer sees
+  ASSIGN
+    init(st) := idle;
+    next(st) := case
+                  st = idle   : {paid_c, paid_t};   -- coin: the choice is made HERE, hidden
+                  st = paid_c : coffee;
+                  st = paid_t : tea;
+                  st = coffee : idle;
+                  st = tea    : idle;
+                esac;
+
+  -- CTL: what is possible from `paid`. FALSE here, TRUE in 01.
+  SPEC AG (paid -> (EX (st = coffee) & EX (st = tea)))        -- false
+  SPEC AG (paid -> EX (st = coffee))                          -- false
+
+  -- LTL: the same four verdicts as in 01 -- same traces, same answers.
+  LTLSPEC G (paid -> X (st = coffee | st = tea))              -- true
+  LTLSPEC G F paid                                            -- true
+  LTLSPEC G F (st = coffee)                                   -- false
+  LTLSPEC G (st != tea)                                       -- false

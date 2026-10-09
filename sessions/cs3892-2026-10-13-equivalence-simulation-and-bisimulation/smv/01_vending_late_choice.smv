@@ -1,0 +1,35 @@
+-- FIGURE: figures/vending_late.svg   (the state machine, drawn -- scripts/draw_models.py)
+-- Session 14 -- two vending machines with the SAME TRACES and different BRANCHING.
+--
+-- This one takes the coin and THEN lets you choose: from `paid` both drinks are
+-- still possible. Compare 02_vending_early_choice.smv, which commits to one
+-- drink as it takes the coin.
+--
+-- Every run of either machine reads   idle paid (coffee | tea) idle paid ...
+-- so the two have exactly the same set of traces, and NO LTL formula can tell
+-- them apart: the four LTLSPECs below get the same verdicts in both files.
+-- The CTL SPECs ask what is still POSSIBLE at `paid`, and they differ.
+--
+-- NuSMV prints CTL results first, then LTL.
+
+MODULE main
+  VAR
+    st : {idle, paid, coffee, tea};
+  ASSIGN
+    init(st) := idle;
+    next(st) := case
+                  st = idle   : paid;             -- coin
+                  st = paid   : {coffee, tea};    -- the choice is made HERE, after paying
+                  st = coffee : idle;
+                  st = tea    : idle;
+                esac;
+
+  -- CTL: what is possible from `paid`. TRUE here, FALSE in 02.
+  SPEC AG (st = paid -> (EX (st = coffee) & EX (st = tea)))   -- true
+  SPEC AG (st = paid -> EX (st = coffee))                     -- true
+
+  -- LTL: the same four verdicts as in 02 -- same traces, same answers.
+  LTLSPEC G (st = paid -> X (st = coffee | st = tea))         -- true
+  LTLSPEC G F (st = paid)                                     -- true
+  LTLSPEC G F (st = coffee)                                   -- false: a run may serve tea forever
+  LTLSPEC G (st != tea)                                       -- false

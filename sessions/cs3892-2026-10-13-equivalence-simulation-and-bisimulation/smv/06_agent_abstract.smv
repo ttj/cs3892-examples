@@ -1,0 +1,23 @@
+-- FIGURE: figures/agent_abstraction.svg   (the state machines, drawn -- scripts/draw_models.py)
+-- Session 14 -- the agent, ABSTRACTED to two states: is a delete happening, or not?
+--
+-- h(act) = del, and plan, ask, abort and done all map to quiet. The abstract
+-- system has an edge h(s) -> h(t) for every edge s -> t of the agent, so it
+-- SIMULATES the agent (07_agent_concrete.smv): every run of the agent, seen
+-- through h, is a run of this model.
+--
+--   * An LTL property that holds HERE holds on the agent.
+--   * One that FAILS here may fail only because the abstraction is too coarse.
+
+MODULE main
+  VAR
+    a : {quiet, del};
+  ASSIGN
+    init(a) := quiet;
+    next(a) := case
+                 a = quiet : {quiet, del};
+                 a = del   : quiet;
+               esac;
+
+  LTLSPEC G (a = del -> X (a != del))                         -- true: so it holds on the agent too
+  LTLSPEC G (a = del -> (X (a != del) & X X (a != del)))      -- false HERE: del, quiet, del -- spurious
