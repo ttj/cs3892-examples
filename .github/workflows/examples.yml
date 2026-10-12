@@ -1,9 +1,10 @@
 name: examples
 
-# Three things have to stay true, and each has bitten already:
+# Four things have to stay true, and each has bitten already:
 #   1. every example produces the verdict its own header claims,
 #   2. every example is reachable from a notebook (the Colab link students click),
-#   3. the notebooks actually execute top to bottom.
+#   3. the notebooks actually execute top to bottom,
+#   4. every link a student can click is one a student can open.
 # (3) caught a generator bug that silently dropped the last line of every code
 # cell -- the repo was green, the notebook was broken.
 
@@ -12,6 +13,9 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch: {}
+  schedule:
+    # Mondays 08:20 UTC. A link can die, and a download can move, without a push.
+    - cron: "20 8 * * 1"
 
 permissions:
   contents: read
@@ -23,6 +27,22 @@ jobs:
       - uses: actions/checkout@v4
       - name: Every example is wired to a notebook and carries a verdict contract
         run: bash scripts/lint_examples.sh
+
+  # (4) A homework README once linked its handout in a private repository: fine
+  # for the instructor, a 404 for every student. check_links.py asks GitHub
+  # whether each linked repository is PUBLIC and each linked file exists, and
+  # refuses file: links and missing relative ones. On the weekly run and on
+  # demand it also requests every other URL; on a push it does not, so that
+  # somebody else's outage cannot fail a commit.
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Every link a student can click is one a student can open
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXTERNAL: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && '--external' || '' }}
+        run: python3 scripts/check_links.py $EXTERNAL
 
   examples:
     runs-on: ubuntu-latest

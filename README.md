@@ -59,6 +59,7 @@ bash scripts/check_examples.sh          # every example, every verdict
 bash scripts/check_examples.sh sessions/cs3892-2026-09-10-sets-and-propositional-logic   # one session
 bash scripts/lint_examples.sh                              # wiring check
 bash scripts/run_notebooks.sh                              # needs nbclient
+python3 scripts/check_links.py                             # every link opens for a student (--external: all hosts)
 ```
 
 ## How an example proves itself

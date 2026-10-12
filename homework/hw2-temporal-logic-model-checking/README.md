@@ -2,8 +2,9 @@
 
 Starters for the HW2 handout. **Out Thu Oct 1 · due Tue Oct 13, 11:59 p.m.**
 
-**The handout is in Brightspace, not on GitHub:** [Content](https://brightspace.vanderbilt.edu/d2l/le/content/646125/Home) → Week 6 →
-*HW2 handout — Temporal logic and model checking* (PDF). Submit in Brightspace as well.
+**The handout:** [PDF](https://github.com/ttj/cs3892-fmstai-fall2026/blob/main/assignments/hw2.pdf) ·
+[web page](https://github.com/ttj/cs3892-fmstai-fall2026/blob/main/assignments/hw2.md). It is also in Brightspace
+([Content](https://brightspace.vanderbilt.edu/d2l/le/content/646125/Home) → Week 6), which is where you submit.
 
 These are **starters, not solutions.** No file here states a verdict the homework asks
 you to predict, and the Part 2 model carries no specifications — the eight are yours.
