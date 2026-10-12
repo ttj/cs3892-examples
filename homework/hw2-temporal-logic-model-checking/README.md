@@ -1,7 +1,9 @@
 # HW2 — Temporal logic and model checking
 
-Starters for [the HW2 handout](https://github.com/ttj/cs3892-fmstai-fall2026/blob/main/assignments/hw2.md).
-**Out Thu Oct 1 · due Tue Oct 13, 11:59 p.m.**
+Starters for the HW2 handout. **Out Thu Oct 1 · due Tue Oct 13, 11:59 p.m.**
+
+**The handout is in Brightspace, not on GitHub:** [Content](https://brightspace.vanderbilt.edu/d2l/le/content/646125/Home) → Week 6 →
+*HW2 handout — Temporal logic and model checking* (PDF). Submit in Brightspace as well.
 
 These are **starters, not solutions.** No file here states a verdict the homework asks
 you to predict, and the Part 2 model carries no specifications — the eight are yours.
@@ -10,7 +12,7 @@ you to predict, and the Part 2 model carries no specifications — the eight are
 |---|---|---|
 | `smv/agent_loop.smv` | a tool-using agent's control loop, with four properties `P1`–`P4`. **Predict their verdicts before you run it** | 1 |
 | `smv/traffic_light.smv` | the vehicle-actuated traffic light. **Complete model, no specifications**; its variables are documented in the header | 2 |
-| `smv/counter.smv` | the course's running counter (the class repo's `labs/running-example.md`), correct as given. **You plant the bug** | 3 |
+| `smv/counter.smv` | the course's running counter, as Part 3 of the handout describes it, correct as given. **You plant the bug** | 3 |
 | `smv/bmc_depth.smv` | two counters and a bug some number of steps deep, for the bound hunt | 4 |
 
 Every file is plain NuSMV: finite types only, no nuXmv-only features. Each was run under

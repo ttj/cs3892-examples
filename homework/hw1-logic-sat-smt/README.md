@@ -1,7 +1,9 @@
 # HW1 — Logic, SAT/SMT, and bounded reachability
 
-Starters for [the HW1 handout](https://github.com/ttj/cs3892-fmstai-fall2026/blob/main/assignments/hw1.md).
-**Out Thu Sep 10 · due Thu Sep 24, 11:59 p.m.**
+Starters for the HW1 handout. **Out Thu Sep 10 · due Thu Sep 24, 11:59 p.m.**
+
+**The handout is in Brightspace, not on GitHub:** [Content](https://brightspace.vanderbilt.edu/d2l/le/content/646125/Home) → Week 3 →
+*HW1 handout — Logic, SAT/SMT, and bounded reachability* (PDF).
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ttj/cs3892-examples/blob/main/notebooks/hw1-logic-sat-smt.ipynb)
 
