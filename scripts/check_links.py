@@ -252,9 +252,12 @@ def main() -> int:
 
     gh, github, other = GitHub(), [], []
     for u in sorted(cited):
-        host = urllib.parse.urlparse(u).netloc.lower().split(":")[0]
-        if u.lower().startswith("file:") or host in ("localhost", "127.0.0.1", "0.0.0.0", ""):
+        parsed = urllib.parse.urlparse(u)
+        scheme, host = parsed.scheme.lower(), parsed.netloc.lower().split(":")[0]
+        if scheme == "file" or (scheme in ("http", "https") and host in ("localhost", "127.0.0.1", "0.0.0.0", "")):
             fail.append(("LOCAL", u, "opens only on the machine that made it"))
+        elif scheme not in ("http", "https"):
+            continue                       # mailto:, tel: and the like are not ours to check
         elif parse_github(u):
             github.append(u)
         elif host not in ("example.com", "www.example.com"):
