@@ -1,0 +1,25 @@
+-- FIGURE: figures/counter.svg   (the state machine, drawn -- scripts/draw_models.py)
+-- Session 16 -- bounded model checking in NuSMV, on the running counter.
+--
+--   NuSMV -bmc -bmc_length 9  06_counter_bmc.smv
+--       both: "no counterexample found with bound 9"
+--   NuSMV -bmc -bmc_length 10 06_counter_bmc.smv
+--       G (x <= 9) is false -- the 11-state run x = 0, 1, ..., 10
+--       G (x <= 10): still "no counterexample found with bound 10"
+--
+-- A clean answer at bound 9 said nothing about G (x <= 9), which is false.
+-- And no bound, however large, turns "no counterexample" into "true":
+-- for that, check the same file without -bmc (BDDs), or use k-induction.
+
+MODULE main
+  VAR
+    x : 0..25;
+  ASSIGN
+    init(x) := 0;
+    next(x) := case
+                 x < 10 : x + 1;
+                 TRUE   : 0;
+               esac;
+
+  LTLSPEC G (x <= 9)                -- false: the counterexample has 10 steps
+  LTLSPEC G (x <= 10)               -- true

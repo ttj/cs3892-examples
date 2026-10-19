@@ -270,6 +270,15 @@ FIG["agent_gateway"] = '''
   start5 [shape=point, width=0.12, color="#2f55d4", fillcolor="#2f55d4", label=""]; start5 -> pF;
 '''
 
+# Session 16: symbolic and bounded model checking.
+FIG["add2_mod16"] = '''
+  label="session 9's add-2 counter on 0..15 - it wraps, so reachable x: 0, 2, ..., 14 and back to 0";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  count [label="x"];
+  start -> count [label="x := 0"];
+  count -> count [label="true / x := (x + 2) mod 16"];
+'''
+
 FIG["agent_buggy"] = FIG["agent"] + '''
   plan -> act [label="BUG: shortcut / approved := false", color="#c0392b", fontcolor="#c0392b", style=dashed];
 '''
@@ -287,6 +296,7 @@ WHERE = {
     "cs3892-2026-10-13-equivalence-simulation-and-bisimulation": ["vending_late", "vending_early", "fair_jams",
         "ends_d3", "agent_abstraction"],
     "cs3892-2026-10-15-specifications-in-practice": ["agent_buggy", "agent_gateway", "monitor_formerly"],
+    "cs3892-2026-10-20-symbolic-and-bounded-model-checking": ["counter", "add2", "add2_mod16"],
 }
 
 if __name__ == "__main__":

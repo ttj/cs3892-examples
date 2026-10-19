@@ -1,0 +1,24 @@
+-- FIGURE: figures/add2_mod16.svg   (the state machine, drawn -- scripts/draw_models.py)
+-- Session 16 -- session 9's add-2 counter on a finite range, for NuSMV.
+--
+-- x counts up by two and wraps at 16, so the reachable values are 0, 2, ..., 14.
+-- P: x != 5 is TRUE, and NOT inductive: 3 satisfies P and steps to 5.
+--
+-- Three ways to check it, three different answers about effort:
+--   BDDs (the default)            NuSMV 05_add2_finite.smv            -> true
+--   k-induction, k = 7            go_bmc; check_invar_bmc -a een-sorensson -k 7
+--                                 -> "cannot prove the invariant ... true or false"
+--   k-induction, k = 8            ... -k 8                            -> true
+-- k = 8 because the longest run through odd values that avoids 5 has seven
+-- steps: 7, 9, 11, 13, 15, 1, 3 -- and then 5.
+-- nuXmv's IC3 (go_msat; check_invar_ic3) also proves it, finding a strengthening
+-- itself; nuXmv is not run in CI (licence).
+
+MODULE main
+  VAR
+    x : 0..15;
+  ASSIGN
+    init(x) := 0;
+    next(x) := (x + 2) mod 16;
+
+  INVARSPEC x != 5                  -- true
