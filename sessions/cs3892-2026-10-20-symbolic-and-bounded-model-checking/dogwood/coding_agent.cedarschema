@@ -1,0 +1,24 @@
+namespace Repo {
+  type SystemContext = { now: datetime };
+
+  type EditInput = { file: String };
+  type TestInput = { suite: String };
+  type TestOutput = { passed: Bool };
+  type PushInput = { branch: String, force: Bool };
+
+  entity Agent;
+  entity Gateway;
+
+  action "Edit" appliesTo {
+    principal: [Agent], resource: [Gateway],
+    context: { input: EditInput, output?: {}, system: SystemContext }
+  };
+  action "RunTests" appliesTo {
+    principal: [Agent], resource: [Gateway],
+    context: { input: TestInput, output?: TestOutput, system: SystemContext }
+  };
+  action "Push" appliesTo {
+    principal: [Agent], resource: [Gateway],
+    context: { input: PushInput, output?: {}, system: SystemContext }
+  };
+}

@@ -271,6 +271,19 @@ FIG["agent_gateway"] = '''
 '''
 
 # Session 16: symbolic and bounded model checking.
+FIG["push_monitor"] = '''
+  label="What a gateway must remember to decide rule 2 (fixed):  no Edit and no failing RunTests since a passing RunTests, within 24h.\\nOne location bit and one clock x. Every edge is  event [guard] / update, decision.  Rules 1 and 3 are decided beside it; a forbid wins.";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  dirty [label="not ready\\n(edited or failed\\nsince the last pass)"]; ready [label="ready\\n(clock x since the pass)", ''' + BLUE + '''];
+  start -> dirty;
+  dirty -> dirty [label="edit, fail"];
+  dirty -> dirty [label="push / DENY", fontcolor="#c0392b"];
+  dirty -> ready [label="pass / x := 0"];
+  ready -> ready [label="pass / x := 0"];
+  ready -> ready [label="push [x <= 24h] / ALLOW", fontcolor="#1b7a43"];
+  ready -> dirty [label="edit, fail"];
+  ready -> dirty [label="push [x > 24h] / DENY", fontcolor="#c0392b"];
+'''
 FIG["add2_mod16"] = '''
   label="session 9's add-2 counter on 0..15 - it wraps, so reachable x: 0, 2, ..., 14 and back to 0";
   labelloc=b; fontname="Helvetica"; fontsize=12;
@@ -296,7 +309,7 @@ WHERE = {
     "cs3892-2026-10-13-equivalence-simulation-and-bisimulation": ["vending_late", "vending_early", "fair_jams",
         "ends_d3", "agent_abstraction"],
     "cs3892-2026-10-15-specifications-in-practice": ["agent_buggy", "agent_gateway", "monitor_formerly"],
-    "cs3892-2026-10-20-symbolic-and-bounded-model-checking": ["counter", "add2", "add2_mod16"],
+    "cs3892-2026-10-20-symbolic-and-bounded-model-checking": ["counter", "add2", "add2_mod16", "push_monitor"],
 }
 
 if __name__ == "__main__":

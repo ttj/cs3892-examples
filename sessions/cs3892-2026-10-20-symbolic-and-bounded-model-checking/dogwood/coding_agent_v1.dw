@@ -1,0 +1,39 @@
+// Version 1: rule 2 as first written. It has a gap -- see 07_dogwood_coding_agent.py.
+
+// A coding agent behind a gateway. Three of the five rules from Thursday's
+// exercise. Cedar's conventions decide conflicts: nothing is allowed unless a
+// permit matches, and any matching forbid wins.
+
+// Editing and running the tests are always allowed.
+@id("edit_and_test")
+permit (principal, action in [Repo::Action::"Edit", Repo::Action::"RunTests"], resource);
+
+// Rule 2. Push only if the tests have passed since the last edit: a passing
+// test run within the last day, and no completed edit since then.
+@id("tests_passed_since_last_edit")
+permit (principal, action == Repo::Action::"Push", resource)
+when temporal {
+    !Repo::Action::"Edit"::response{}
+    since within 24h
+    Repo::Action::"RunTests"::response{ output.passed: true }
+};
+
+// Rule 1. Never push to main. No history needed: plain Cedar.
+@id("never_push_to_main")
+forbid (principal, action == Repo::Action::"Push", resource)
+when { context.input.branch == "main" };
+
+// Rule 3. At most three force-pushes an hour. Count completed force-pushes
+// (responses): a refused attempt stays in the history as a request, and must
+// not use up the allowance.
+@id("at_most_three_force_pushes_an_hour")
+forbid (principal, action == Repo::Action::"Push", resource)
+when { context.input.force }
+when temporal {
+    exists (n: Long). (
+        (count for (t: Timepoint). where (
+            formerly within 1h (Repo::Action::"Push"::response{ input.force: true } && tp(t))
+        )) == n
+        && n >= 3
+    )
+};
