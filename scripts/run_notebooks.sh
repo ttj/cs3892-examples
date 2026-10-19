@@ -18,6 +18,14 @@ targets=("$@")
 
 for nb in "${targets[@]}"; do
   echo "== executing $nb"
+  # FRESH=1 starts every notebook the way a new Colab runtime does: no Z3 and
+  # no downloaded tools. Without it, the first notebook that installs Z3 hides
+  # every later one that forgot to -- which is how sessions 15 and 16 shipped a
+  # setup cell that passed CI and failed on Colab with "No module named 'z3'".
+  if [[ "${FRESH:-0}" == "1" ]]; then
+    "$PY" -m pip uninstall -y -q z3-solver >/dev/null 2>&1 || true
+    rm -rf "$HOME/.cache/cs3892"
+  fi
   "$PY" - "$nb" <<'PYEOF'
 import sys, nbformat
 from nbclient import NotebookClient
