@@ -107,11 +107,11 @@ print("   The two versions differ at one request, @720.\n")
 print("C. Rule 3: at most three force-pushes an hour, counting COMPLETED pushes (responses)\n")
 force = replay("coding_agent.dw", "trace_force.log")
 table("trace_force.log", verdict=force)
-assert [force[t][0] for t in (100, 200, 300, 400, 3702, 3800)] == ["ALLOW"] * 3 + ["DENY", "ALLOW", "DENY"]
+assert [force[t][0] for t in (100, 200, 300, 400, 3750, 3760)] == ["ALLOW"] * 3 + ["DENY", "ALLOW", "DENY"]
 assert force[400][1] == "at_most_three_force_pushes_an_hour"
 print("   @400: three completed force-pushes in the last hour, so the forbid wins over the permit.")
-print("   @3702: the push completed at @101 is now 3601 s old, outside the window: two left, allowed.")
-print("   @3800: @201, @301 and @3703 are all inside the hour again: refused.\n")
+print("   @3750: the push completed at @101 is now 3649 s old, outside the hour: two left, allowed.")
+print("   @3760: @201, @301 and @3751 are all inside the hour: three again, refused.\n")
 
 # ------------------------------------------------------------------------------
 print("D. What Cedar receives. `dogwood lower` turns each temporal condition into a context field:\n")

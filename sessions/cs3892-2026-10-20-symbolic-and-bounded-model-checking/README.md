@@ -20,7 +20,7 @@ events before it.
 | `smv/05_add2_finite.smv` | the finite add-2 counter in NuSMV, three ways | BDDs: true · k-induction k = 7: cannot prove · k = 8: true | NuSMV / nuXmv |
 | `smv/06_counter_bmc.smv` | `NuSMV -bmc -bmc_length k` on the counter | bound 9: no counterexample for either · bound 10: `G (x ≤ 9)` false · BDDs: false, true | NuSMV / nuXmv |
 | `python/dogwood_cli.py` | finds the `dogwood` command, or fetches the course's Linux build of v1.1 (checked by SHA-256), or compiles it | — | Python |
-| `python/07_dogwood_coding_agent.py` | three rules for a coding agent in Cedar and Dogwood (`dogwood/`), replayed by Dogwood's own interpreter: a forbid, a `since`, a `count` | version 1 lets a push through after a failing test run (@720) · the fix (two `since`s) refuses it · force-pushes: allow ×3, deny, allow once one leaves the hour, deny · `lower`: each temporal condition becomes one context Boolean | Dogwood 1.1 |
+| `python/07_dogwood_coding_agent.py` | three rules for a coding agent in Cedar and Dogwood (`dogwood/`), replayed by Dogwood's own interpreter: a forbid, a `since`, a `count` | version 1 lets a push through after a failing test run (@720) · the fix (two `since`s) refuses it · force-pushes: allow ×3, deny at @400, allow at @3750 once @101 leaves the hour, deny at @3760 · `lower`: each temporal condition becomes one context Boolean | Dogwood 1.1 |
 
 Every SMV result was run under **NuSMV 2.6.0** and **nuXmv 2.2.0**; nuXmv's IC3
 (`go_msat; check_invar_ic3`) also proves `05`, but nuXmv is not run in CI. The notebook asserts the
