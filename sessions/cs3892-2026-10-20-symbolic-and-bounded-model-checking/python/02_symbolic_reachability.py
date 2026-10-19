@@ -67,6 +67,8 @@ print("   AG (x <= 9):   Reach and not P is", "empty" if bad9 == 0 else
       "NOT empty -> fails; a bad state first appears in Reach_%d" % first)
 
 assert len(history) == 11 and b.count(reach, X) == 11       # fixpoint after 10 steps
+assert [b.size(r) for r in history] == [7, 6, 7, 5, 7, 6, 7, 4, 7, 6, 7]   # the slide's table
+assert b.size(T) == 36
 assert bad10 == 0 and bad9 != 0 and first == 10
 assert reach == P10                                       # Reach IS the node for 'x <= 10'
 print("\n   The reachable set IS the property 'x <= 10', as a diagram of",

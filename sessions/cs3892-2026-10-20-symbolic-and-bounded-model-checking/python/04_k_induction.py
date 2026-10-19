@@ -73,13 +73,15 @@ assert step(T, even, 1) is None and base(I, T, even, 1)
 dom = lambda x: And(x >= 0, x <= 15)
 Tw = lambda x, y: y == (x + 2) % 16
 print("\nadd-2 on 0..15 with wrap-around, P: x != 5")
-first = None
+first, chains = None, {}
 for k in range(1, 10):
     w = step(Tw, P, k, dom)
+    chains[k] = w
     print("   k = %d   step %s" % (k, "holds -> PROVED" if w is None else "fails, e.g. " + " -> ".join(map(str, w))))
     if w is None and first is None:
         first = k
         break
 assert first == 8 and base(I, Tw, P, 8, dom)
+assert chains[7] == [7, 9, 11, 13, 15, 1, 3, 5]          # x' = x + 2 mod 16 is a bijection: one chain
 print("\nOver the integers no k works, and the cure is a stronger invariant. Here, on a finite")
 print("range, k = 8 works: the longest run through odd numbers that avoids 5 has 7 steps.")

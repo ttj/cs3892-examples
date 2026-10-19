@@ -29,6 +29,13 @@ print("   full decision tree     :", 2 ** 6 - 1, "nodes (31 tests + 32 leaves)")
 print("   reduced ordered BDD    :", b.size(P), "nodes (leaves included)")
 assert b.count(P, X) == 11 and b.size(P) == 7
 
+print("\n   The slide's small version, 'x <= 2' on three bits b2 b1 b0:")
+b3 = BDD(nvars=3)
+P2 = at_most(b3, [0, 1, 2], 2)
+print("   full decision tree     :", 2 ** 4 - 1, "nodes (7 tests + 8 leaves)")
+print("   reduced ordered BDD    :", b3.size(P2), "nodes (3 tests + 2 leaves)")
+assert b3.count(P2, [0, 1, 2]) == 3 and b3.size(P2) == 5
+
 print("\n2. Canonical: the same set always gets the same diagram")
 # x <= 10 written by hand: x4 = 0, and not (x3 = 1 and (x2 = 1 or (x1 = 1 and x0 = 1)))
 x4, x3, x2, x1, x0 = (b.var(v) for v in X)

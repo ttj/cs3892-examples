@@ -13,17 +13,19 @@ events before it.
 | File | Shows | Result | Tool |
 |---|---|---|---|
 | `python/bdd.py` | a reduced ordered BDD in about eighty lines, imported by the others | — | Python |
-| `python/01_bdd_sets_of_states.py` | a set of states as a Boolean function; reduction; canonicity; variable order | "x ≤ 10": 11 of 32 patterns, 7 nodes (the full tree has 63) · two formulas, one node · `a = b` on 4-bit registers: 14 nodes interleaved, 47 separated | Python |
-| `python/02_symbolic_reachability.py` | `Reach_{k+1} = Reach_k ∪ Post(Reach_k)` on BDDs, with `Post` as image computation | fixpoint after 10 steps · `AG (x ≤ 10)` holds · `AG (x ≤ 9)` fails, first bad state in `Reach_10` | Python |
+| `python/01_bdd_sets_of_states.py` | a set of states as a Boolean function; reduction; canonicity; variable order | "x ≤ 10": 11 of 32 patterns, 7 nodes (the full tree has 63) · "x ≤ 2" on three bits: 5 nodes (tree 15) · two formulas, one node · `a = b` on 4-bit registers: 14 nodes interleaved, 47 separated | Python |
+| `python/02_symbolic_reachability.py` | `Reach_{k+1} = Reach_k ∪ Post(Reach_k)` on BDDs, with `Post` as image computation | fixpoint after 10 steps · nodes per step 7, 6, 7, 5, 7, 6, 7, 4, 7, 6, 7 · `T` has 36 nodes · `AG (x ≤ 10)` holds · `AG (x ≤ 9)` fails, first bad state in `Reach_10` | Python |
 | `python/03_bmc_what_k_shows.py` | BMC with Z3 on a FALSE property | no counterexample at every k ≤ 9 · counterexample `0 → … → 10` at k = 10 | Z3 |
-| `python/04_k_induction.py` | base and step queries; a CTI chain; strengthening; a finite range | add-2, `x ≠ 5`: step fails at every k (…, 1, 3, 5) · "x even" proves it at k = 1 · on 0..15 with wrap, k = 8 | Z3 |
+| `python/04_k_induction.py` | base and step queries; a CTI chain; strengthening; a finite range | add-2, `x ≠ 5`: step fails at every k (…, 1, 3, 5) · "x even" proves it at k = 1 · on 0..15 with wrap, k = 8 (at k = 7 the step fails on 7, 9, …, 15, 1, 3, 5) | Z3 |
+| `python/08_ic3_spacer.py` | IC3 builds the strengthening: Spacer (Z3's IC3/PDR-style engine) on add-2 as Horn clauses | integers: SAFE, with an inductive invariant it found itself (checked: contains 0, closed under a step, implies `x ≠ 5`) · 0..15: SAFE | Z3 (Spacer) |
 | `smv/05_add2_finite.smv` | the finite add-2 counter in NuSMV, three ways | BDDs: true · k-induction k = 7: cannot prove · k = 8: true | NuSMV / nuXmv |
 | `smv/06_counter_bmc.smv` | `NuSMV -bmc -bmc_length k` on the counter | bound 9: no counterexample for either · bound 10: `G (x ≤ 9)` false · BDDs: false, true | NuSMV / nuXmv |
 | `python/dogwood_cli.py` | finds the `dogwood` command, or fetches the course's Linux build of v1.1 (checked by SHA-256), or compiles it | — | Python |
 | `python/07_dogwood_coding_agent.py` | three rules for a coding agent in Cedar and Dogwood (`dogwood/`), replayed by Dogwood's own interpreter: a forbid, a `since`, a `count` | version 1 lets a push through after a failing test run (@720) · the fix (two `since`s) refuses it · force-pushes: allow ×3, deny at @400, allow at @3750 once @101 leaves the hour, deny at @3760 · `lower`: each temporal condition becomes one context Boolean | Dogwood 1.1 |
 
 Every SMV result was run under **NuSMV 2.6.0** and **nuXmv 2.2.0**; nuXmv's IC3
-(`go_msat; check_invar_ic3`) also proves `05`, but nuXmv is not run in CI. The notebook asserts the
+(`go_msat; check_invar_ic3`) also proves `05`, and the integer version, but nuXmv is not run in CI;
+`08` is the IC3 check that is. The notebook asserts the
 NuSMV results, and the Python files assert their own.
 
 `07` runs the **real** Dogwood reference interpreter (AWS, Apache-2.0,
