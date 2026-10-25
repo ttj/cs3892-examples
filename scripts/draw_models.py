@@ -270,6 +270,38 @@ FIG["agent_gateway"] = '''
   start5 [shape=point, width=0.12, color="#2f55d4", fillcolor="#2f55d4", label=""]; start5 -> pF;
 '''
 
+# Session 17: bounded model checking of programs (CBMC).
+FIG["agent_c"] = '''
+  label="c/agent.c as a transition system: one location, data variables approved and step. Every edge is  [guard] / update.\\naction and answer are inputs CBMC may choose freely. With -DGATEWAY the red edge becomes a refusal that loops back.";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  loop [label="loop\\n(approved, step)"]; done [label="done"]; bad [label="assertion\\nfails", fillcolor="#fbe4e4", color="#c0392b"];
+  start -> loop [label="approved := 0, step := 0"];
+  loop -> loop [label="[action = 0] / step := step + 1"];
+  loop -> loop [label="[action = 1] / approved := answer, step := step + 1"];
+  loop -> loop [label="[action = 2, approved] / approved := 0, step := step + 1", fontcolor="#1b7a43"];
+  loop -> bad [label="[action = 2, not approved]", color="#c0392b", fontcolor="#c0392b"];
+  loop -> done [label="[step = 3]"];
+'''
+FIG["retry"] = '''
+  label="c/retry.c as a transition system. max_retries is an input in 0..5; each attempt's outcome ok is an input too.\\nThe claim attempts <= 3 is checked on the exit edge.";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  loop [label="loop\\n(attempts, ok)"]; exit [label="exit"]; bad [label="attempts > 3", fillcolor="#fbe4e4", color="#c0392b"];
+  start -> loop [label="attempts := 0, ok := 0"];
+  loop -> loop [label="[not ok, attempts < max_retries] / attempts := attempts + 1, ok := input"];
+  loop -> exit [label="[ok or attempts >= max_retries]"];
+  exit -> bad [label="[attempts > 3]", color="#c0392b", fontcolor="#c0392b"];
+'''
+
+# Session 18: loop invariants and abstract interpretation.
+FIG["count100"] = '''
+  label="i := 0; while (i < 100) i := i + 1  as a transition system. The analysis computes an interval for i at the loop head.";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  head [label="loop head\\n(i)"]; exit [label="after the loop"];
+  start -> head [label="i := 0"];
+  head -> head [label="[i < 100] / i := i + 1"];
+  head -> exit [label="[i >= 100]"];
+'''
+
 # Session 16: symbolic and bounded model checking.
 FIG["push_monitor"] = '''
   label="What a gateway must remember to decide rule 2 (fixed):  no Edit and no failing RunTests since a passing RunTests, within 24h.\\nOne location bit and one clock x. Every edge is  event [guard] / update, decision.  Rules 1 and 3 are decided beside it; a forbid wins.";
@@ -310,6 +342,8 @@ WHERE = {
         "ends_d3", "agent_abstraction"],
     "cs3892-2026-10-15-specifications-in-practice": ["agent_buggy", "agent_gateway", "monitor_formerly"],
     "cs3892-2026-10-20-symbolic-and-bounded-model-checking": ["counter", "add2", "add2_mod16", "push_monitor"],
+    "cs3892-2026-10-27-bounded-model-checking-of-programs": ["counter", "agent_c", "retry"],
+    "cs3892-2026-10-29-loop-invariants-and-abstract-interpretation": ["add2", "count100"],
 }
 
 if __name__ == "__main__":
