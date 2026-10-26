@@ -136,14 +136,15 @@ def install_elan() -> None:
         init = Path(td) / "elan-init"
         init.write_bytes(blob)
         init.chmod(0o755)
-        subprocess.run([str(init), "-y", "--default-toolchain", "none", "--no-modify-path"], check=True)
+        subprocess.run([str(init), "-y", "--default-toolchain", "none", "--no-modify-path"], check=True,
+                       stdout=sys.stderr)                     # keep stdout clean for --json
 
 
 def install_toolchain() -> None:
     """Fetch Lean through the freshly installed elan, then check its binaries before first use."""
     elan = Path.home() / ".elan/bin/elan"
     say(f"fetching Lean {TOOLCHAIN} (about 575 MB, once) ...")
-    subprocess.run([str(elan), "toolchain", "install", TOOLCHAIN], check=True)
+    subprocess.run([str(elan), "toolchain", "install", TOOLCHAIN], check=True, stdout=sys.stderr)
     pins = TOOLCHAIN_SHA256.get((platform.system(), platform.machine()))
     if not pins:
         say(f"note: no pinned hashes for this platform; {TOOLCHAIN} not hash-checked")
@@ -177,8 +178,9 @@ def sha256(path: Path) -> str:
 def lake_run(lake: str, *args: str, capture: bool = True) -> subprocess.CompletedProcess:
     env = dict(os.environ)
     env["PATH"] = str(Path(lake).parent) + os.pathsep + env.get("PATH", "")
-    return subprocess.run([lake, *args], cwd=HERE, env=env, text=True,
-                          capture_output=capture, timeout=3600)
+    if capture:
+        return subprocess.run([lake, *args], cwd=HERE, env=env, text=True, capture_output=True, timeout=3600)
+    return subprocess.run([lake, *args], cwd=HERE, env=env, text=True, stdout=sys.stderr, timeout=3600)
 
 
 def norm(s: str) -> str:
