@@ -7,9 +7,10 @@ the questions and the points, is
 [`assignments/hw4.md`](https://github.com/ttj/cs3892-fmstai-fall2026/blob/main/assignments/hw4.md)
 in the class repository.
 
-**Lean v4.33.0, core library only.** No Mathlib, so it builds in seconds, and Parts 1–2 also run in
-the [Lean web editor](https://live.lean-lang.org/). Do not use FMAIV's day 3 project for this: it
-pins Lean v4.29.0 and has different exercises.
+**Lean v4.33.0, core library only.** No Mathlib, so it builds in seconds. The
+[Lean web editor](https://live.lean-lang.org/) is handy for experimenting with a proof, but it runs a
+different Lean version: the checker here is what counts. Do not use FMAIV's day 3 project for this:
+it pins Lean v4.29.0 and has different exercises.
 
 | File | Part | What it is |
 |---|---|---|
