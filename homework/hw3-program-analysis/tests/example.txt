@@ -1,0 +1,4 @@
+# One test per line: a b c   (the three side lengths). Lines starting with # are ignored.
+# These two are only an example of the format. Put CBMC's suite in cbmc.txt and the LLM's in llm.txt.
+3 4 5
+1 1 1

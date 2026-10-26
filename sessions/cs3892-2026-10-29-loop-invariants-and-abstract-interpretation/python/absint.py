@@ -55,6 +55,9 @@ class Signs:
     def refine(self, cond, env):
         return env
 
+    def excludes_zero(self, v):
+        return v in (self.NEG, self.POS, self.BOT)
+
 
 # ------------------------------------------------------------------------------ intervals
 class Intervals:
@@ -89,6 +92,9 @@ class Intervals:
             return (a[0] - b[1], a[1] - b[0])
         products = [x * y for x in a for y in b if not (x in (INF, -INF) and y == 0 or y in (INF, -INF) and x == 0)]
         return (min(products), max(products))
+
+    def excludes_zero(self, v):
+        return v is None or v[0] > 0 or v[1] < 0
 
     def refine(self, cond, env):
         """Narrow a variable compared with a constant: x < c gives x <= c - 1, x >= c gives x >= c."""
@@ -175,7 +181,7 @@ class Analysis:
         if kind == "assert":
             op, a, b = s[1]
             diff = self.expr(("-", a, b), env)
-            safe = diff is not None and (diff[0] > 0 or diff[1] < 0) if op == "!=" else True
+            safe = self.D.excludes_zero(diff) if op == "!=" else True
             if not safe:
                 self.alarms.append((s[1], show(diff)))
             return env
