@@ -27,6 +27,7 @@ example is never orphaned from the lecture that used it.
 | **HW1** · Logic, SAT/SMT, bounded reachability — *due Thu Sep 24* | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ttj/cs3892-examples/blob/main/notebooks/hw1-logic-sat-smt.ipynb) | [`homework/hw1-logic-sat-smt`](homework/hw1-logic-sat-smt) |
 | **HW2** · Temporal logic and model checking — *due Tue Oct 13* | [smvis](https://bit.ly/fmaiv_smvis), or NuSMV on the command line | [`homework/hw2-temporal-logic-model-checking`](homework/hw2-temporal-logic-model-checking) |
 | **HW3** · Program analysis: CBMC, loop invariants, abstract interpretation — *due Tue Nov 3* | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ttj/cs3892-examples/blob/main/notebooks/hw3-program-analysis.ipynb) | [`homework/hw3-program-analysis`](homework/hw3-program-analysis) |
+| **HW4** · Interactive theorem proving in Lean 4 — *out Tue Nov 3, due Thu Nov 12* | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ttj/cs3892-examples/blob/main/notebooks/hw4-lean.ipynb) | [`homework/hw4-lean`](homework/hw4-lean) |
 
 ## How it is laid out
 

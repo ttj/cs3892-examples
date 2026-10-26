@@ -1,0 +1,9 @@
+name = "HW4"
+version = "0.1.0"
+defaultTargets = ["HW4"]
+
+[leanOptions]
+autoImplicit = false
+
+[[lean_lib]]
+name = "HW4"

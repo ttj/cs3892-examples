@@ -56,6 +56,12 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - run: pip install --quiet z3-solver
+      # HW4's checker installs elan + Lean v4.33.0 itself (about 575 MB) when it finds no lake;
+      # cache it here. The notebooks job deliberately does not: it must prove the install works.
+      - uses: actions/cache@v4
+        with:
+          path: ~/.elan
+          key: elan-${{ hashFiles('homework/hw4-lean/lean-toolchain') }}
       - name: Run every example against its recorded verdict
         run: bash scripts/check_examples.sh
 
