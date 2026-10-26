@@ -58,10 +58,12 @@ jobs:
       - run: pip install --quiet z3-solver
       # HW4's checker installs elan + Lean v4.33.0 itself (about 575 MB) when it finds no lake;
       # cache it here. The notebooks job deliberately does not: it must prove the install works.
+      # The key covers check_hw4.py, which pins the elan release and its SHA-256, so a cached
+      # ~/.elan always comes from the verified installer (caches from before the pin never match).
       - uses: actions/cache@v4
         with:
           path: ~/.elan
-          key: elan-${{ hashFiles('homework/hw4-lean/lean-toolchain') }}
+          key: elan-v4.2.4-${{ hashFiles('homework/hw4-lean/lean-toolchain', 'homework/hw4-lean/check_hw4.py') }}
       - name: Run every example against its recorded verdict
         run: bash scripts/check_examples.sh
 

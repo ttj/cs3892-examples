@@ -15,25 +15,53 @@ A theorem counts as PROVED only when all of these hold:
 HW4/Defs.lean and lean-toolchain must be unchanged (checked by SHA-256).
 
 Needs only Python 3.10+ and Lean. If `lake` is not found, this installs elan, the Lean
-version manager, into ~/.elan (no root needed), and the first build downloads Lean
-v4.33.0 (about 575 MB, once).
+version manager, into ~/.elan (no root needed): the official elan v4.2.4 release archive for
+this platform, checked against a pinned SHA-256 BEFORE anything in it is run (the same digests
+GitHub records for those release assets). It then installs Lean v4.33.0 through elan (about
+575 MB, once) and, on Linux x86_64, checks the lean and lake binaries against pinned SHA-256s
+before either is run. A Lean you installed yourself is used as it is.
 """
 from __future__ import annotations
 
 import hashlib
+import io
 import json
 import os
+import platform
 import re
 import shutil
 import subprocess
 import sys
+import tarfile
 import tempfile
 import urllib.request
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 LEAN_VERSION = "4.33.0"
-ELAN_INIT = "https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh"
+ELAN_VERSION = "v4.2.4"
+# (system, machine) -> (release asset triple, SHA-256 of elan-<triple>.tar.gz). These equal the
+# digests GitHub records for the v4.2.4 release assets (checked Oct 26 2026).
+ELAN_ASSETS = {
+    ("Linux", "x86_64"): ("x86_64-unknown-linux-gnu",
+                          "42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63"),
+    ("Linux", "aarch64"): ("aarch64-unknown-linux-gnu",
+                           "05febd124d84ebf994b2e7479922a5650b1e950c17ae3bd1ddd776b65bb72bf9"),
+    ("Darwin", "x86_64"): ("x86_64-apple-darwin",
+                           "8a340b309d8ed2e96f930761fa223b3af57a38f5d253b53ac90293c9516f8cd4"),
+    ("Darwin", "arm64"): ("aarch64-apple-darwin",
+                          "7ad829861392c718dfebde3a83b5c8508df47be02af68894b094b0b3952616e5"),
+}
+# When this script installs elan itself, it also installs the toolchain and checks these binaries
+# BEFORE running either (identical in two independent official installs, Oct 26 2026). Only for
+# Linux x86_64 (Colab, CI); elsewhere the toolchain comes from elan unchecked by this script.
+TOOLCHAIN = "leanprover/lean4:v4.33.0"
+TOOLCHAIN_SHA256 = {
+    ("Linux", "x86_64"): {
+        "bin/lean": "e8baaa71855a616dc351028f3ad2200051b0671f423a1696a100e809302d5550",
+        "bin/lake": "60330ab6f07dce20f3fa9ebb08e8b984ea9549eac172afeb15d9d2227060e2b3",
+    },
+}
 PINNED = {
     "HW4/Defs.lean": "6186b0453b11b3f82218dd4de7aa902e8aed598ed33a04cffe6cdbf987c0dd17",
     "lean-toolchain": "302cd63c54178885b89e669f33b38f12f4dd7ae7e5cac537b3203e3768d8fb2b",
@@ -84,18 +112,58 @@ def say(msg: str) -> None:
     print(msg, file=sys.stderr, flush=True)
 
 
+def install_elan() -> None:
+    """Install the pinned elan release into ~/.elan, refusing anything whose SHA-256 differs."""
+    key = (platform.system(), platform.machine())
+    if key not in ELAN_ASSETS:
+        raise SystemExit(f"No pinned elan build for {key[0]} {key[1]}. Install elan yourself "
+                         "(https://github.com/leanprover/elan), then re-run this.")
+    triple, want = ELAN_ASSETS[key]
+    url = f"https://github.com/leanprover/elan/releases/download/{ELAN_VERSION}/elan-{triple}.tar.gz"
+    say(f"lake not found: installing elan {ELAN_VERSION} (the Lean version manager) into ~/.elan ...")
+    with urllib.request.urlopen(url, timeout=300) as r:
+        data = r.read()
+    got = hashlib.sha256(data).hexdigest()
+    if got != want:
+        raise SystemExit(f"REFUSING to run the downloaded elan: its SHA-256 is {got}, "
+                         f"expected {want} ({url})")
+    with tarfile.open(fileobj=io.BytesIO(data), mode="r:gz") as tf:
+        member = tf.getmember("elan-init")                   # the only file the archive needs
+        if not member.isfile():
+            raise SystemExit("unexpected elan archive layout")
+        blob = tf.extractfile(member).read()
+    with tempfile.TemporaryDirectory() as td:
+        init = Path(td) / "elan-init"
+        init.write_bytes(blob)
+        init.chmod(0o755)
+        subprocess.run([str(init), "-y", "--default-toolchain", "none", "--no-modify-path"], check=True)
+
+
+def install_toolchain() -> None:
+    """Fetch Lean through the freshly installed elan, then check its binaries before first use."""
+    elan = Path.home() / ".elan/bin/elan"
+    say(f"fetching Lean {TOOLCHAIN} (about 575 MB, once) ...")
+    subprocess.run([str(elan), "toolchain", "install", TOOLCHAIN], check=True)
+    pins = TOOLCHAIN_SHA256.get((platform.system(), platform.machine()))
+    if not pins:
+        say(f"note: no pinned hashes for this platform; {TOOLCHAIN} not hash-checked")
+        return
+    tdir = Path.home() / ".elan/toolchains" / TOOLCHAIN.replace("/", "--").replace(":", "---")
+    for rel, want in pins.items():
+        got = hashlib.sha256((tdir / rel).read_bytes()).hexdigest()
+        if got != want:
+            raise SystemExit(f"REFUSING to run {tdir / rel}: its SHA-256 is {got}, expected {want}. "
+                             f"Delete {tdir} and try again.")
+    say(f"{TOOLCHAIN}: lean and lake match their pinned SHA-256")
+
+
 def find_lake() -> str:
-    """lake from $LAKE, the PATH, or ~/.elan/bin; otherwise install elan (no root)."""
+    """lake from $LAKE, the PATH, or ~/.elan/bin; otherwise install the pinned elan (no root)."""
     for cand in (os.environ.get("LAKE"), shutil.which("lake"), str(Path.home() / ".elan/bin/lake")):
         if cand and Path(cand).exists():
             return cand
-    say("lake not found: installing elan (the Lean version manager) into ~/.elan ...")
-    with tempfile.TemporaryDirectory() as td:
-        script = Path(td) / "elan-init.sh"
-        with urllib.request.urlopen(ELAN_INIT, timeout=120) as r:
-            script.write_bytes(r.read())
-        subprocess.run(["sh", str(script), "-y", "--default-toolchain", "none", "--no-modify-path"],
-                       check=True)
+    install_elan()
+    install_toolchain()
     lake = Path.home() / ".elan/bin/lake"
     if not lake.exists():
         raise SystemExit("elan installed, but ~/.elan/bin/lake is missing")
