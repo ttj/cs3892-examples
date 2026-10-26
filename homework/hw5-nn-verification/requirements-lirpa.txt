@@ -1,0 +1,6 @@
+# auto_LiRPA 0.8.0 (BSD-3-Clause, the alpha,beta-CROWN team): its maintained releases are on
+# GitHub only (PyPI stops at 0.3, from 2021), so it is pinned to the release commit, which git
+# verifies by hash. --ignore-requires-python because its metadata names Python 3.11 only; the
+# course checks it on 3.10 and 3.12 (and Colab). --no-deps because requirements.txt already
+# pins every dependency.
+auto_LiRPA @ git+https://github.com/Verified-Intelligence/auto_LiRPA.git@e3930353a3589f7d10879f1e71223d1eefb57196

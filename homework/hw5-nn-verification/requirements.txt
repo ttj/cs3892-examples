@@ -1,0 +1,17 @@
+# HW5's tools, every version pinned exactly. Install with BOTH commands (see README.md):
+#
+#     pip install -r requirements.txt
+#     pip install --no-deps --ignore-requires-python -r requirements-lirpa.txt
+#
+# torch is the CPU build (about 200 MB, not the 2.5 GB CUDA one) from PyTorch's own index;
+# macOS has no "+cpu" build, and PyPI's torch is CPU-only there. auto_LiRPA 0.8.0 needs
+# torch < 2.12, hence 2.11.0.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.11.0+cpu ; sys_platform != "darwin"
+torch==2.11.0 ; sys_platform == "darwin"
+numpy==2.2.6
+highspy==1.15.1
+packaging==26.3
+tqdm==4.70.1
+appdirs==1.4.4
+graphviz==0.21
