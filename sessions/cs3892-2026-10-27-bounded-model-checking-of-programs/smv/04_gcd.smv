@@ -1,0 +1,37 @@
+-- FIGURE: figures/gcd.svg   (the state machine, drawn -- scripts/draw_models.py)
+-- Session 17 -- the same Euclid loop as c/gcd.c, as an SMV model: every input pair at once.
+--
+--   NuSMV 04_gcd.smv        (nuXmv 04_gcd.smv gives the same verdicts)
+--     F (a = b)                                    true   -- the loop terminates
+--     G (a = b -> a divides a0 and b0)              true   -- divides both
+--     G (a = b & d divides a0 and b0 -> d <= a)     true   -- the greatest
+--     F (a = 1)                                    false  -- gcd(a0, b0) is not always 1
+--
+-- a0, b0 and d are FROZENVARs: chosen once, at the start, and never changed. The model
+-- checker covers every initial state, so a property of a frozen d holds for EVERY d --
+-- that is how "no larger number divides both" is said without a quantifier.
+
+MODULE main
+  FROZENVAR
+    a0 : 1..20;
+    b0 : 1..20;
+    d  : 1..20;
+  VAR
+    a : 1..20;
+    b : 1..20;
+  ASSIGN
+    init(a) := a0;
+    init(b) := b0;
+    next(a) := case
+                 a > b : a - b;
+                 TRUE  : a;
+               esac;
+    next(b) := case
+                 b > a : b - a;
+                 TRUE  : b;
+               esac;
+
+  LTLSPEC F (a = b)
+  INVARSPEC a = b -> (a0 mod a = 0 & b0 mod a = 0)
+  INVARSPEC (a = b & a0 mod d = 0 & b0 mod d = 0) -> d <= a
+  LTLSPEC F (a = 1)

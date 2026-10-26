@@ -292,14 +292,15 @@ FIG["retry"] = '''
   exit -> bad [label="[attempts > 3]", color="#c0392b", fontcolor="#c0392b"];
 '''
 
-# Session 18: loop invariants and abstract interpretation.
-FIG["count100"] = '''
-  label="i := 0; while (i < 100) i := i + 1  as a transition system. The analysis computes an interval for i at the loop head.";
+# Session 17: Euclid by subtraction (GCD).
+FIG["gcd"] = '''
+  label="Euclid's algorithm by subtraction (c/gcd.c, smv/04_gcd.smv) as a transition system. a0, b0 are the inputs, 1..20.\\nOn exit a = b = g. The specification: g divides a0 and b0, and no larger number does.";
   labelloc=b; fontname="Helvetica"; fontsize=12;
-  head [label="loop head\\n(i)"]; exit [label="after the loop"];
-  start -> head [label="i := 0"];
-  head -> head [label="[i < 100] / i := i + 1"];
-  head -> exit [label="[i >= 100]"];
+  loop [label="loop\\n(a, b)"]; done [label="done\\ng := a", ''' + BLUE + '''];
+  start -> loop [label="a := a0, b := b0"];
+  loop:n -> loop:n [label="[a > b] / a := a - b"];
+  loop:s -> loop:s [label="[b > a] / b := b - a"];
+  loop -> done [label="[a = b]"];
 '''
 
 # Session 16: symbolic and bounded model checking.
@@ -342,8 +343,8 @@ WHERE = {
         "ends_d3", "agent_abstraction"],
     "cs3892-2026-10-15-specifications-in-practice": ["agent_buggy", "agent_gateway", "monitor_formerly"],
     "cs3892-2026-10-20-symbolic-and-bounded-model-checking": ["counter", "add2", "add2_mod16", "push_monitor"],
-    "cs3892-2026-10-27-bounded-model-checking-of-programs": ["counter", "agent_c", "retry"],
-    "cs3892-2026-10-29-loop-invariants-and-abstract-interpretation": ["add2", "count100"],
+    "cs3892-2026-10-27-bounded-model-checking-of-programs": ["counter", "agent_c", "retry", "gcd"],
+    "cs3892-2026-10-29-loop-invariants-and-abstract-interpretation": ["add2", "counter"],
 }
 
 if __name__ == "__main__":

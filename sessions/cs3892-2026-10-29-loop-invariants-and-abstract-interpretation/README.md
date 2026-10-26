@@ -15,13 +15,13 @@ tests, and exposing vacuous specifications.
 | `c/add2_loop.c`, `python/03_loop_contract.py` | session 9's add-2 counter as a C loop, with a loop contract | `x != 5`: not preserved, counterexample 3 → 5 · `0 <= x <= 1000, x even`: SUCCESSFUL with no bound · no `decreases` clause, so partial correctness | CBMC |
 | `python/absint.py` | a small abstract interpreter: signs, intervals, join, widening, a fixpoint at each loop head | — | Python |
 | `python/04_signs_and_intervals.py` | the domains' arithmetic, and what a join loses | `+` plus `-` is top · `if (*) x := 1 else x := 5; y := x - 3`: signs say top, intervals `[-2, 2]` | Python |
-| `python/05_widening.py` | a loop: plain join, widening, one narrowing step | 101 rounds to `[0, 100]` · widening: `[0, +inf]`, exit `[100, +inf]` · narrowing: exit `[100, 100]` | Python |
+| `python/05_widening.py` | the running counter: plain join, widening, one narrowing step | plain join: `[0, 10]` in 11 rounds (as session 16's BDD fixpoint) · widening: `[0, +inf]` · narrowing: `[0, 10]`, so `x <= 10` without a hand-written invariant | Python |
 | `c/correlated.c`, `python/06_join_loses_correlation.py` | a false alarm from a non-relational domain; what a relational one keeps | intervals: `x - y + 1` in `[0, 2]`, alarm · `x - y` in `[0, 0]`: safe · goto-analyzer `--intervals` UNKNOWN, CBMC SUCCESS | Python, goto-analyzer, CBMC |
 | `c/vacuous.c`, `python/07_vacuity.py` | three vacuous specifications and the check for each | `assume` nobody meets: SUCCESSFUL, `--cover assume` exposes it · unsatisfiable precondition · a postcondition true of every result | CBMC, Z3 |
 
 ![Session 9's add-2 counter.](figures/add2.svg)
 
-![The loop in 05.](figures/count100.svg)
+![The running counter, analysed in 05.](figures/counter.svg)
 
 Frama-C and ACSL appear on the slides as notation only. Ubuntu's current package is a 2022 release
 with no prover, so no Frama-C output is claimed or checked here. CBMC's loop contracts
