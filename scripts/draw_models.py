@@ -292,6 +292,54 @@ FIG["retry"] = '''
   exit -> bad [label="[attempts > 3]", color="#c0392b", fontcolor="#c0392b"];
 '''
 
+# Session 18 (Oct 27 rule: every example on a slide gets its picture).
+FIG["shipping"] = """
+  label="c/shipping.c as a transition system: three decisions, four ways out. Each branch is a goal for cbmc --cover branch.";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  d1 [label="valid?"]; d2 [label="heavy?"]; d3 [label="express?"];
+  bad [label="return -1", fillcolor="#fbe4e4", color="#c0392b"]; out [label="return cost"];
+  start -> d1 [label="weight_g, express := inputs"];
+  d1 -> bad [label="[weight_g <= 0]"];
+  d1 -> d2 [label="[weight_g > 0] / cost := 500"];
+  d2 -> d3 [label="[weight_g > 2000] / cost := cost + 300"];
+  d2 -> d3 [label="[weight_g <= 2000]"];
+  d3 -> out [label="[express] / cost := cost * 2"];
+  d3 -> out [label="[not express]"];
+"""
+FIG["division"] = """
+  label="Division by repeated subtraction (02_division_vcs). Pre: x >= 0, y > 0.  Post: x = q*y + r and 0 <= r < y.";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  loop [label="loop\\n(q, r)"]; done [label="done"];
+  start -> loop [label="q := 0, r := x"];
+  loop -> loop [label="[r >= y] / r := r - y, q := q + 1"];
+  loop -> done [label="[r < y]"];
+"""
+FIG["ifelse_x15"] = """
+  label="if (*) x := 1 else x := 5;  y := x - 3  (04_signs_and_intervals). Two runs: y = -2 or y = 2.";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  c [label="branch"]; j [label="join\\n(x)"]; e [label="end\\n(x, y)"];
+  start -> c;
+  c -> j [label="* / x := 1"];
+  c -> j [label="* / x := 5"];
+  j -> e [label="y := x - 3"];
+"""
+FIG["correlated"] = """
+  label="c/correlated.c: on every run x = y, so the divisor x - y + 1 is always 1.";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  c [label="branch"]; j [label="join\\n(x, y)"]; ok [label="return 10 / (x - y + 1)"];
+  start -> c;
+  c -> j [label="* / x := 1, y := 1"];
+  c -> j [label="* / x := 2, y := 2"];
+  j -> ok [label="assert x - y + 1 != 0"];
+"""
+FIG["vacuous"] = """
+  label="c/vacuous.c: no input meets the assume, so no run reaches assert(0), and CBMC says SUCCESSFUL.";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  a [label="assume\\n(n > 10 and n < 5)"]; dead [label="assert(0)", style="rounded,dashed", color="#c0392b"];
+  start -> a [label="n := input"];
+  a -> dead [label="[no n satisfies the assume]", style=dashed, color="#c0392b", fontcolor="#c0392b"];
+"""
+
 # Session 17: Euclid by subtraction (GCD).
 FIG["gcd"] = '''
   label="Euclid's algorithm by subtraction (c/gcd.c, smv/04_gcd.smv) as a transition system. a0, b0 are the inputs, 1..20.\\nOn exit a = b = g. The specification: g divides a0 and b0, and no larger number does.";
@@ -344,7 +392,8 @@ WHERE = {
     "cs3892-2026-10-15-specifications-in-practice": ["agent_buggy", "agent_gateway", "monitor_formerly"],
     "cs3892-2026-10-20-symbolic-and-bounded-model-checking": ["counter", "add2", "add2_mod16", "push_monitor"],
     "cs3892-2026-10-27-bounded-model-checking-of-programs": ["counter", "agent_c", "retry", "gcd", "add2_mod16"],
-    "cs3892-2026-10-29-loop-invariants-and-abstract-interpretation": ["add2", "counter"],
+    "cs3892-2026-10-29-loop-invariants-and-abstract-interpretation": ["add2", "counter", "agent_c", "shipping",
+        "division", "ifelse_x15", "correlated", "vacuous"],
 }
 
 if __name__ == "__main__":

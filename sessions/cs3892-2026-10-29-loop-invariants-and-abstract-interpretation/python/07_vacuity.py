@@ -1,3 +1,4 @@
+# FIGURE: figures/vacuous.svg   (c/vacuous.c, the harness, drawn -- scripts/draw_models.py)
 """Session 18 -- vacuous specifications: "verified", and saying nothing.
 
 D7's middle column, in code. Three ways a specification can pass while constraining

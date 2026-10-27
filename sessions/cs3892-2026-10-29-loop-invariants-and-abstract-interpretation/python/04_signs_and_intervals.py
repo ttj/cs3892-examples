@@ -1,3 +1,4 @@
+# FIGURE: figures/ifelse_x15.svg   (the if/else program, drawn -- scripts/draw_models.py)
 """Session 18 -- two abstract domains: what they can say, and what a join throws away.
 
 An abstract value stands for a SET of concrete values. The sign domain has five:

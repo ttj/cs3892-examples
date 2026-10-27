@@ -1,3 +1,4 @@
+# FIGURE: figures/division.svg   (the division loop as a transition system, drawn -- scripts/draw_models.py)
 """Session 18 -- a loop invariant, and the three conditions it must meet.
 
     {Pre}   q := 0; r := x;  while (r >= y) { r := r - y; q := q + 1 }   {Post}

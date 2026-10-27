@@ -1,3 +1,4 @@
+# FIGURE: figures/shipping.svg   (c/shipping.c as a transition system, drawn -- scripts/draw_models.py)
 """Session 18 -- generating tests with a model checker: cbmc --cover branch.
 
 Each branch of shipping() becomes a goal: "make the solver reach this edge". CBMC

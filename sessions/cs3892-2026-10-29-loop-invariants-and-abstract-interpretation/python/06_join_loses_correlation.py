@@ -1,3 +1,4 @@
+# FIGURE: figures/correlated.svg   (c/correlated.c, the two branches, drawn -- scripts/draw_models.py)
 """Session 18 -- what a non-relational domain loses at a join, and a false alarm.
 
     if (*) { x := 1; y := 1 } else { x := 2; y := 2 };   assert x - y + 1 != 0
