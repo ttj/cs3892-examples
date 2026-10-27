@@ -38,6 +38,11 @@ def short(s):
     return s.replace("goto_symex::\\guard#", "g")
 
 
+# The C column of the slide's table: each construct as it appears in agent.c.
+src = AGENT.read_text()
+assert all(c in src for c in ("action = nondet_int();", "assume(0 <= action && action <= 2)",
+                              "if (action == 2)", "assert(approved);"))
+
 # --- 1. the GOTO program --------------------------------------------------------------------
 run("goto-cc", AGENT, "-o", work / "agent.gb")
 goto = run("goto-instrument", "--show-goto-functions", work / "agent.gb")
@@ -65,8 +70,9 @@ for l in body.splitlines():
         eqs.append(l.replace("goto_symex::\\guard#", "g").replace("nondet_symex::", ""))
 print("\n2. SSA equations, first iteration (cbmc --unwind 4 --property main.assertion.1 --show-vcc)")
 print("\n".join("   " + l for l in eqs[:8]))
-print("   ... %d equations in all" % len(eqs))
+print("   ... %d equations in all; step 1's delete branch: %s" % (len(eqs), next(e for e in eqs if e.startswith("g2 "))))
 assert "approved@1_2 = 0" in eqs and "action_in1 = nondet0" in eqs and "action@1_2 = action_in1" in eqs
+assert "action@1_2 ≥ 0 ∧ ¬(action@1_2 ≥ 3)" in eqs and "g2 ⇔ (action@1_2 = 2)" in eqs
 
 # --- 3. the SMT-LIB formula CBMC writes ------------------------------------------------------------
 smt = work / "agent.smt2"
@@ -94,19 +100,26 @@ print("   %s   %d declare-fun, %d define-fun, %d assert, %d lines" % (logic, cou
       counts["define-fun"], counts["assert"], len(lines)))
 print("\n".join("   " + smt_short(l)[:110] for l in pick))
 print("   inputs (free variables): " + ", ".join(inputs))
+picked = [smt_short(l) for l in pick]
+assert "(declare-fun nondet0 () (_ BitVec 32))" in picked and "(assert (= g2 (= action@1_2 (_ bv2 32))))" in picked
+assert any("(and (bvsge action@1_2 (_ bv0 32)) (not (bvsge action@1_2 (_ bv3 32))))" in l for l in picked)
 assert logic == "(set-logic QF_AUFBV)" and "(_ BitVec 32)" in text and len(inputs) == 6
 
 # the property and its negation: one check per unrolled delete, and "some check fails" asserted
 props = [l for l in lines if l.startswith("(define-fun B") and "=>" in l and "approved" in l]
 negated = next(l for l in lines if re.match(r"\(assert \(or \(not B\d+\)", l))
 print("   the property, step 2's copy: " + smt_short(props[0])[:120])
-print("   the negation:                " + re.sub(r"B(\d+)", r"P\1", negated) + "   then (check-sat)")
+print("   the negation:                " + negated + "   then (check-sat)")
 assert len(props) == 2 and "(not (= approved@1_6 (_ bv0 32)))" in smt_short(props[0])
-assert negated.count("(not B") == 3
+# B42, B43 are the assumes of steps 1 and 2: a copy of the check only counts on runs that meet them.
+assert smt_short(props[0]) == ("(define-fun B52 () Bool (=> (and true B42 B43) (=> (and (not g3) g4) "
+                               "(not (= approved@1_6 (_ bv0 32))))))")
+assert negated == "(assert (or (not B51) (not B52) (not B53)))"
 
 checks = [re.sub(r"^\{-?\d+\}\s*", "", l).strip() for l in body.splitlines() if l.strip().startswith("{1}")]
-print("   SSA checks: " + " | ".join(re.sub(r"goto_symex::\\guard#", "g", re.sub(r"main::(?:\d+::)*(\w+)!0@(\d)#(\d+)", r"\1@\2_\3", c)) for c in checks[:2]))
-assert len(checks) == 3
+ssa_checks = [re.sub(r"goto_symex::\\guard#", "g", re.sub(r"main::(?:\d+::)*(\w+)!0@(\d)#(\d+)", r"\1@\2_\3", c)) for c in checks]
+print("   SSA checks: " + " | ".join(ssa_checks[:2]))
+assert len(checks) == 3 and "(¬g3 ∧ g4) ⇒ ¬(approved@1_6 = 0)" in ssa_checks
 
 # --- 4. a solver answers ---------------------------------------------------------------------------
 s = z3.Solver()
