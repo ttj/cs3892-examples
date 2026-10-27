@@ -4,8 +4,10 @@
 c/retry.c retries a flaky call at most max_retries times (an input from 0 to 5) and
 claims the loop never makes more than 3 attempts. That claim is false.
 
-  --unwind 3 --no-unwinding-assertions   CBMC looks only at runs that leave the loop
-                                         within 3 iterations, and says SUCCESSFUL.
+  --unwind 3 --no-unwinding-assertions   CBMC copies the loop body 3 times and drops any
+                                         run that is still looping after the 3rd copy, so
+                                         it looks only at runs that leave the loop after at
+                                         most 2 iterations -- and says SUCCESSFUL.
   --unwind 3                             the unwinding assertion (on by default since
                                          CBMC 6) fails: some run is LONGER than the bound,
                                          so the answer above was about the wrong runs.
@@ -15,7 +17,9 @@ claims the loop never makes more than 3 attempts. That claim is false.
 It also prints what CBMC hands the solver at bound 2 (--show-vcc): one copy of each
 variable per assignment (static single assignment), the loop guards as Booleans, and,
 last, the assertion. The solver is asked for inputs that make every constraint true and
-that last line false; if it finds them, they are a counterexample.
+that last line false; if it finds them, they are a counterexample. One line is neither code
+nor assertion: not (g1 and g2). With unwinding assertions off, CBMC ASSUMES that the loop
+stops at the bound, and that assumption is what silently drops the longer runs.
 
 Expected: the assertions at the bottom hold.
 """
@@ -38,7 +42,7 @@ def show(args):
 
 a = show(["--unwind", 3, "--no-unwinding-assertions"])
 assert "assertion attempts <= 3: SUCCESS" in a and "VERIFICATION SUCCESSFUL" in a
-print("   ^ wrong: it only considered runs that finish within 3 iterations\n")
+print("   ^ wrong: it only considered runs that leave the loop after at most 2 iterations\n")
 
 b = show(["--unwind", 3])
 assert "unwinding assertion loop 0: FAILURE" in b and "VERIFICATION FAILED" in b
@@ -63,3 +67,4 @@ for l in body.splitlines():
 print("\n".join(keep))
 assert any("attempts_3 = 1" in l for l in keep) and any("attempts_4 = 2" in l for l in keep)
 assert keep[-1].strip().startswith("¬(attempts_5 ≥ 4)")       # the assertion, attempts <= 3, comes last
+assert any(l.strip() == "¬(g1 ∧ g2)" for l in keep)           # the unwinding ASSUMPTION

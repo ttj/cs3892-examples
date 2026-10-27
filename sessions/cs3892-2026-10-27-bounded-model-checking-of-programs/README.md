@@ -10,17 +10,20 @@ assertion fail. That is session 16's bounded model checking, with the program it
 | File | Shows | Result | Tool |
 |---|---|---|---|
 | `python/cbmc_cli.py` | finds CBMC, or fetches the official 6.11.0 release (Ubuntu 22.04 package, SHA-256 checked) and unpacks it in Python: no root needed | — | Python |
-| `c/counter.c`, `python/01_counter_in_c.py` | the running counter as a loop, checked for 30 steps | `x <= 10`: SUCCESS · the counter has no inputs, so CBMC settles it while unrolling | CBMC |
+| `c/counter.c`, `python/01_counter_in_c.py` | the running counter as a loop, checked for 30 steps; then the formula CBMC builds for it at bound 2 (`--show-vcc --no-propagation --no-simplify`) | `x <= 10`: SUCCESS · the formula: `x_2 = 0` (I), two copies of the loop body as equations with guards, and `(g1 ∧ g3) ⇒ (x_8 ≤ 10)` last | CBMC |
 | `c/agent.c`, `python/02_agent_trace.py` | session 11's agent in C: the model's action and the human's answer are inputs | without a gateway: FAILURE, trace `action=2` with `approved=0` · `-DGATEWAY`: SUCCESS for 3 steps | CBMC |
 | `c/retry.c`, `python/03_unwinding_assertions.py` | what an unwinding assertion protects you from; the formula CBMC builds (`--show-vcc`) | `--unwind 3 --no-unwinding-assertions`: SUCCESSFUL (wrong) · `--unwind 3`: unwinding assertion FAILURE · `--unwind 6`: the real counterexample, `max_retries` 4 or 5 | CBMC |
 | `c/gcd.c`, `python/04_gcd.py` | Euclid's algorithm by subtraction, for every `a0, b0` in 1..20; a broken `gcd` that returns 1; a specification too weak to notice | full spec (`g` divides both, and no larger number does): SUCCESS at `--unwind 20` · `-DBROKEN`: "divides both" SUCCESS, "the greatest" FAILURE · `-DBROKEN -DWEAK`: SUCCESSFUL, and wrong · `--unwind 19`: unwinding assertion FAILURE on `a0 = 20, b0 = 1` | CBMC |
 | `smv/04_gcd.smv` | the same loop in SMV, every input pair at once; `a0`, `b0` and the candidate divisor `d` are `FROZENVAR`s, so a property of `d` holds for every `d` | `F (a = b)` true · divides both: true · the greatest: true · `F (a = 1)` false (a pair with gcd > 1) | NuSMV 2.6 (nuXmv 2.2: the same) |
+| `python/05_ic3_frames.py` | what IC3's frames are: a small explicit-state IC3 on session 16's finite add-2 (x in 0..15, P: x != 5), printing every frame after every round | round 1: Fr1 = all but {5}; then 3, 1, 15, … excluded one frame down; round 8: Fr1 = Fr2 = the even numbers, an inductive invariant | Python |
 
 ![c/agent.c as a transition system.](figures/agent_c.svg)
 
 ![c/retry.c as a transition system.](figures/retry.svg)
 
 ![Euclid's algorithm by subtraction as a transition system.](figures/gcd.svg)
+
+![The finite add-2 counter, used by 05.](figures/add2_mod16.svg)
 
 **Since CBMC 6, unwinding assertions are on by default.** `--unwinding-assertions` is accepted and
 changes nothing; `--no-unwinding-assertions` turns them off. Older tutorials, and FMAIV's day 4

@@ -343,7 +343,7 @@ WHERE = {
         "ends_d3", "agent_abstraction"],
     "cs3892-2026-10-15-specifications-in-practice": ["agent_buggy", "agent_gateway", "monitor_formerly"],
     "cs3892-2026-10-20-symbolic-and-bounded-model-checking": ["counter", "add2", "add2_mod16", "push_monitor"],
-    "cs3892-2026-10-27-bounded-model-checking-of-programs": ["counter", "agent_c", "retry", "gcd"],
+    "cs3892-2026-10-27-bounded-model-checking-of-programs": ["counter", "agent_c", "retry", "gcd", "add2_mod16"],
     "cs3892-2026-10-29-loop-invariants-and-abstract-interpretation": ["add2", "counter"],
 }
 
