@@ -19,6 +19,7 @@ tests, and exposing vacuous specifications.
 | `c/correlated.c`, `python/06_join_loses_correlation.py` | a false alarm from a non-relational domain; what a relational one keeps | intervals: `x - y + 1` in `[0, 2]`, alarm · `x - y` in `[0, 0]`: safe · goto-analyzer `--intervals` UNKNOWN, CBMC SUCCESS | Python, goto-analyzer, CBMC |
 | `c/vacuous.c`, `python/07_vacuity.py` | three vacuous specifications and the check for each | `assume` nobody meets: SUCCESSFUL, `--cover assume` exposes it · unsatisfiable precondition · a postcondition true of every result | CBMC, Z3 |
 | `c/agent.c`, `python/08_cbmc_inside.py` | inside CBMC, on session 11's agent: the GOTO program, the SSA equations, the SMT-LIB formula CBMC writes (`--smt2 --outfile`), and Z3's answer on that file | GOTO: the loop as `IF ¬(step < 3) THEN GOTO 5 … GOTO 1` · SMT-LIB: `QF_AUFBV`, 32-bit bit-vectors, 6 inputs as `declare-fun` · Z3: sat; the model's inputs, replayed, delete with `approved = 0` | CBMC, Z3 |
+| `c/bad_sort.c`, `python/09_property_based_testing.py` | one specification of a sort (sorted, and a permutation of the input), checked two ways: Hypothesis property-based tests in Python, and CBMC assertions in C; `bad_sort` copies the minimum instead of swapping it | Hypothesis: `test_sorted` passes on 300 random lists, `test_permutation` fails and shrinks to `[0, -1]` → `[-1, -1]` · CBMC, every array of 3 ints: sorted SUCCESS, permutation FAILURE | Hypothesis, CBMC |
 
 ![Session 9's add-2 counter.](figures/add2.svg)
 
