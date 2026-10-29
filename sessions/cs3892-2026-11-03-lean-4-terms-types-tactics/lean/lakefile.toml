@@ -1,0 +1,9 @@
+name = "S19"
+version = "0.1.0"
+defaultTargets = ["S19"]
+
+[leanOptions]
+autoImplicit = false
+
+[[lean_lib]]
+name = "S19"
