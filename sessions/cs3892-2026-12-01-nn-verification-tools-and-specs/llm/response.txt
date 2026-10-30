@@ -1,0 +1,58 @@
+**Q1.vnnlib:**
+```
+; Property: For all inputs within L-infinity distance 0.1 of (0.45, 0.55) [clipped to [0,1]^2],
+; the network classifies as class 0, i.e., Y_0 > Y_1.
+; Violation: Y_0 <= Y_1
+
+(declare-const X_0 Real)
+(declare-const X_1 Real)
+(declare-const Y_0 Real)
+(declare-const Y_1 Real)
+
+(assert (>= X_0 0.35))
+(assert (<= X_0 0.55))
+(assert (>= X_1 0.45))
+(assert (<= X_1 0.65))
+
+(assert (<= Y_0 Y_1))
+```
+
+**Q2.vnnlib:**
+```
+; Property: For all inputs with X_0 in [0.6, 0.8] and X_1 in [0.1, 0.3],
+; class 1 does not have a logit >= class 0's, i.e., Y_0 > Y_1.
+; Violation: Y_0 <= Y_1
+
+(declare-const X_0 Real)
+(declare-const X_1 Real)
+(declare-const Y_0 Real)
+(declare-const Y_1 Real)
+
+(assert (>= X_0 0.6))
+(assert (<= X_0 0.8))
+(assert (>= X_1 0.1))
+(assert (<= X_1 0.3))
+
+(assert (<= Y_0 Y_1))
+```
+
+**Q3.vnnlib:**
+```
+; Property: For all inputs within L-infinity distance 0.05 of (0.3, 0.3) [clipped to [0,1]^2],
+; the logit gap Y_0 - Y_1 >= 0.4.
+; Violation: Y_0 - Y_1 <= 0.4 (non-strict form flags gaps < 0.4 and exactly = 0.4)
+
+(declare-const X_0 Real)
+(declare-const X_1 Real)
+(declare-const Y_0 Real)
+(declare-const Y_1 Real)
+
+(assert (>= X_0 0.25))
+(assert (<= X_0 0.35))
+(assert (>= X_1 0.25))
+(assert (<= X_1 0.35))
+
+(assert (<= (- Y_0 Y_1) 0.4))
+```
+
+Each file is ready for a VNN-LIB verifier: if it returns UNSAT, the property holds; if SAT, a counterexample was found. The non-strict form in Q3 treats a gap of exactly 0.4 as acceptable (only gaps below 0.4 are violations).

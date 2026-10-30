@@ -1,0 +1,13 @@
+I have a tiny ReLU neural network with 2 inputs X_0 and X_1 (each in [0, 1]) and 2 outputs Y_0 and
+Y_1 (the logits of class 0 and class 1; the predicted class is the one with the higher logit).
+
+Please write one VNN-LIB file (the format used by VNN-COMP verifiers) for each of the three
+properties below. Each file must be complete and self-contained: declare every input and output,
+give the input box, and state the output condition.
+
+Q1. The network classifies every input within L-infinity distance 0.1 of the point (0.45, 0.55) as
+class 0, with inputs kept in [0, 1].
+Q2. No input with X_0 between 0.6 and 0.8 and X_1 between 0.1 and 0.3 gives class 1 a logit at
+least as high as class 0's.
+Q3. For every input within L-infinity distance 0.05 of the point (0.3, 0.3), with inputs kept in
+[0, 1], the logit of class 0 exceeds the logit of class 1 by at least 0.4.
