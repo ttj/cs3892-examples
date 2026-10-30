@@ -1,0 +1,12 @@
+-- FIGURE: figures/counter.svg   (the running counter, drawn -- scripts/draw_models.py)
+-- Session 26: the running counter, for checking LTL formulas an LLM wrote from English.
+-- 01_llm_ltl.py appends each formula as an LTLSPEC and runs NuSMV.
+MODULE main
+  VAR
+    x : 0..25;
+  ASSIGN
+    init(x) := 0;
+    next(x) := case
+                 x < 10 : x + 1;
+                 TRUE   : 0;
+               esac;

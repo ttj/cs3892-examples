@@ -1,0 +1,29 @@
+Lean 4, version 4.33.0, core library only: NO Mathlib, so no `ring`, no `Finset`, no Mathlib
+lemmas. Replace the `sorry` with a proof. Reply with the complete Lean file and nothing else.
+
+def sumTo : Nat → Nat
+  | 0 => 0
+  | n + 1 => (n + 1) + sumTo n
+
+theorem two_sumTo (n : Nat) : 2 * sumTo n = n * (n + 1) := by
+  sorry
+
+Your previous answer was:
+
+def sumTo : Nat → Nat
+  | 0 => 0
+  | n + 1 => (n + 1) + sumTo n
+
+theorem two_sumTo (n : Nat) : 2 * sumTo n = n * (n + 1) := by
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+    simp only [sumTo]
+    rw [mul_add, ih]
+    omega
+
+Lean rejected it with this error:
+
+Round1.lean:10:8: error(lean.unknownIdentifier): Unknown identifier `mul_add`
+
+Reply with the corrected complete Lean file and nothing else.

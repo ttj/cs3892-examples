@@ -1,0 +1,6 @@
+```
+LTLSPEC G(x <= 10); // R1
+LTLSPEC G(x = 10 -> X(x = 0)); // R2
+LTLSPEC G(F(x = 0)); // R3
+LTLSPEC !(!(x = 5) U (x = 10)); // R4
+```

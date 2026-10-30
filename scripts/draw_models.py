@@ -365,6 +365,14 @@ FIG["push_monitor"] = '''
   ready -> dirty [label="edit, fail"];
   ready -> dirty [label="push [x > 24h] / DENY", fontcolor="#c0392b"];
 '''
+FIG["free_x"] = '''
+  label="session 26: the FREE model -- x may take any value at every step; a formula true here is true on every run";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  count [label="x in 0..25"];
+  start -> count [label="any x"];
+  count -> count [label="true / x := any value in 0..25"];
+'''
+
 FIG["vend_lts"] = '''
   label="session 21: session 14's two vending machines as ONE labelled transition system (Cslib's LTS) - edges are actions";
   labelloc=b; fontname="Helvetica"; fontsize=12;
@@ -423,6 +431,7 @@ WHERE = {
         "division", "ifelse_x15", "correlated", "vacuous"],
     "cs3892-2026-11-05-lean-4-transition-systems": ["switch", "add2"],
     "cs3892-2026-11-10-cslib-machine-checked-foundations": ["vend_lts", "nba_fg_n"],
+    "cs3892-2026-12-03-ai-for-formal-methods": ["counter", "free_x"],
 }
 
 if __name__ == "__main__":

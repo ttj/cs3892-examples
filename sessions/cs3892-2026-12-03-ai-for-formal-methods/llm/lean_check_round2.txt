@@ -1,0 +1,12 @@
+Round2.lean:10:4: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  c ≥ 0
+  b ≥ 0
+  a ≥ 0
+  a ≥ 0
+  a + c ≥ -1
+  2*a - b + 2*c ≤ -3
+where
+ a := ↑(sumTo n)
+ b := ↑(n + 1) * ↑(n + 1 + 1)
+ c := ↑n

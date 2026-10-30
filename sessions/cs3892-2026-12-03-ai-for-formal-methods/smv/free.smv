@@ -1,0 +1,7 @@
+-- FIGURE: figures/free_x.svg   (the free model, drawn -- scripts/draw_models.py)
+-- Session 26: a FREE model -- x may take any value in 0..25 at every step, in any order -- so a
+-- formula that holds here holds on EVERY run over that range. 01_llm_ltl.py checks
+-- LTLSPEC (llm <-> reference) here: true means the two formulas say the same thing.
+MODULE main
+  VAR
+    x : 0..25;

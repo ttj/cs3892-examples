@@ -1,0 +1,19 @@
+Here is a NuSMV model of a counter:
+
+MODULE main
+  VAR
+    x : 0..25;
+  ASSIGN
+    init(x) := 0;
+    next(x) := case
+                 x < 10 : x + 1;
+                 TRUE   : 0;
+               esac;
+
+Write one NuSMV LTLSPEC line (LTL, in NuSMV syntax) for each requirement below. Reply with the
+four lines only, labelled R1 to R4 in a comment at the end of each line.
+
+R1. The counter never exceeds 10.
+R2. Whenever the counter is 10, it is 0 at the next step.
+R3. The counter is 0 infinitely often.
+R4. The counter reaches 10 only after it has been 5.
