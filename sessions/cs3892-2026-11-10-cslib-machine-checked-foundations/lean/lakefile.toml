@@ -1,0 +1,16 @@
+name = "S21"
+version = "0.1.0"
+defaultTargets = ["S21"]
+
+[leanOptions]
+autoImplicit = false
+
+# The course pin (labs/README.md): Lean v4.33.0 + Mathlib v4.33.0 + Cslib v4.33.0.
+# Not Cslib's `main`, which drags in a release-candidate toolchain.
+[[require]]
+name = "cslib"
+scope = "leanprover"
+rev = "v4.33.0"
+
+[[lean_lib]]
+name = "S21"

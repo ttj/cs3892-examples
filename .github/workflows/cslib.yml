@@ -1,0 +1,36 @@
+name: cslib
+
+# Session 21 (Cslib) needs Mathlib v4.33.0 + Cslib v4.33.0, about 7.5 GB: too heavy for every push,
+# so the default jobs skip it (sessions/<s>/HEAVY) and this workflow runs it when it changes.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "sessions/cs3892-2026-11-10-cslib-machine-checked-foundations/**"
+      - "notebooks/cs3892-2026-11-10-cslib-machine-checked-foundations.ipynb"
+      - ".github/workflows/cslib.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  cslib:
+    runs-on: ubuntu-latest
+    env:
+      S: sessions/cs3892-2026-11-10-cslib-machine-checked-foundations
+    steps:
+      - name: Free disk space for Mathlib (the runner ships ~14 GB free)
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h /
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet nbclient nbformat ipykernel
+      - name: The session's scripts (they fetch the Mathlib cache and build what they import)
+        run: bash scripts/check_examples.sh "$S"
+      - name: The session's notebook, end to end
+        run: bash scripts/run_notebooks.sh "notebooks/cs3892-2026-11-10-cslib-machine-checked-foundations.ipynb"

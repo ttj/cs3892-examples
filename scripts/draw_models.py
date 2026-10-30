@@ -365,6 +365,20 @@ FIG["push_monitor"] = '''
   ready -> dirty [label="edit, fail"];
   ready -> dirty [label="push [x > 24h] / DENY", fontcolor="#c0392b"];
 '''
+FIG["vend_lts"] = '''
+  label="session 21: session 14's two vending machines as ONE labelled transition system (Cslib's LTS) - edges are actions";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  subgraph cluster_late { label="LATE choice"; fontsize=12; color="#9aa0ad";
+    idleL [label="idleL"]; paid [label="paid", fillcolor="#e3e9fb", color="#2f55d4"]; }
+  subgraph cluster_early { label="EARLY choice"; fontsize=12; color="#9aa0ad";
+    idleE [label="idleE"]; paidC [label="paidC", fillcolor="#e3e9fb", color="#2f55d4"]; paidT [label="paidT", fillcolor="#e3e9fb", color="#2f55d4"]; }
+  start2 [shape=point, width=0.12, color="#2f55d4", fillcolor="#2f55d4", label=""];
+  start -> idleL; start2 -> idleE;
+  idleL -> paid [label="coin"]; paid -> idleL [label="coffee"]; paid -> idleL [label="tea"];
+  idleE -> paidC [label="coin"]; idleE -> paidT [label="coin"];
+  paidC -> idleE [label="coffee"]; paidT -> idleE [label="tea"];
+'''
+
 FIG["switch"] = '''
   label="session 20: the running counter with a power switch and a cap N - edges are  guard / update";
   labelloc=b; fontname="Helvetica"; fontsize=12;
@@ -408,6 +422,7 @@ WHERE = {
     "cs3892-2026-10-29-loop-invariants-and-abstract-interpretation": ["add2", "counter", "agent_c", "shipping",
         "division", "ifelse_x15", "correlated", "vacuous"],
     "cs3892-2026-11-05-lean-4-transition-systems": ["switch", "add2"],
+    "cs3892-2026-11-10-cslib-machine-checked-foundations": ["vend_lts", "nba_fg_n"],
 }
 
 if __name__ == "__main__":

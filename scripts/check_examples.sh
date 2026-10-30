@@ -17,7 +17,15 @@ PY="${PYTHON:-python3}"
 cd "$ROOT"
 
 targets=("$@")
-[[ ${#targets[@]} -eq 0 ]] && targets=(sessions/*/ homework/*/)
+if [[ ${#targets[@]} -eq 0 ]]; then
+  targets=(sessions/*/ homework/*/)
+  # A session folder holding a HEAVY file (session 21: Mathlib + Cslib, ~8 GB) runs only when named
+  # explicitly or with HEAVY=1; its own workflow does that. The default run stays fast.
+  if [[ "${HEAVY:-0}" != "1" ]]; then
+    keep=(); for d in "${targets[@]}"; do [[ -f "$d/HEAVY" ]] && echo "== $d: skipped (HEAVY; run it by name)" || keep+=("$d"); done
+    targets=("${keep[@]}")
+  fi
+fi
 
 fail=0; n=0
 for d in "${targets[@]}"; do

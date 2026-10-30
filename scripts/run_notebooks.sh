@@ -14,7 +14,14 @@ PY="${PYTHON:-python3}"
 cd "$ROOT"
 
 targets=("$@")
-[[ ${#targets[@]} -eq 0 ]] && targets=(notebooks/*.ipynb)
+if [[ ${#targets[@]} -eq 0 ]]; then
+  targets=(notebooks/*.ipynb)
+  # Notebooks of HEAVY sessions (see check_examples.sh) run only when named or with HEAVY=1.
+  if [[ "${HEAVY:-0}" != "1" ]]; then
+    keep=(); for nb in "${targets[@]}"; do s="$(basename "$nb" .ipynb)"; [[ -f "sessions/$s/HEAVY" ]] && echo "== $nb: skipped (HEAVY; run it by name)" || keep+=("$nb"); done
+    targets=("${keep[@]}")
+  fi
+fi
 
 for nb in "${targets[@]}"; do
   echo "== executing $nb"
