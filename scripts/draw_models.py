@@ -365,6 +365,19 @@ FIG["push_monitor"] = '''
   ready -> dirty [label="edit, fail"];
   ready -> dirty [label="push [x > 24h] / DENY", fontcolor="#c0392b"];
 '''
+FIG["switch"] = '''
+  label="session 20: the running counter with a power switch and a cap N - edges are  guard / update";
+  labelloc=b; fontname="Helvetica"; fontsize=12;
+  off [label="off, x"];
+  on [label="on, x", fillcolor="#e3e9fb", color="#2f55d4"];
+  start -> off [label="x := 0"];
+  off -> on [label="on / x held"];
+  on:n -> on:n [label="x < N / x := x + 1", color="#1b7a43", fontcolor="#1b7a43"];
+  on:s -> on:s [label="x >= N / x := 0", color="#c0392b", fontcolor="#c0392b"];
+  on -> off [label="off / x := 0"];
+  off:s -> off:s [label="off / x := 0"];
+'''
+
 FIG["add2_mod16"] = '''
   label="session 9's add-2 counter on 0..15 - it wraps, so reachable x: 0, 2, ..., 14 and back to 0";
   labelloc=b; fontname="Helvetica"; fontsize=12;
@@ -394,6 +407,7 @@ WHERE = {
     "cs3892-2026-10-27-bounded-model-checking-of-programs": ["counter", "agent_c", "retry", "gcd", "add2_mod16"],
     "cs3892-2026-10-29-loop-invariants-and-abstract-interpretation": ["add2", "counter", "agent_c", "shipping",
         "division", "ifelse_x15", "correlated", "vacuous"],
+    "cs3892-2026-11-05-lean-4-transition-systems": ["switch", "add2"],
 }
 
 if __name__ == "__main__":
