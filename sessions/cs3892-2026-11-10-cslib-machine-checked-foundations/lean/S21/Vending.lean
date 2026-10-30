@@ -13,7 +13,7 @@ namespace S21
 open Cslib Cslib.Logic.HML
 
 -- SLIDE: vend-lts
-/-- Both machines' states in one LTS: LATE is idleL, paid; EARLY is idleE, paidC, paidT. -/
+/-- LATE: idleL, paid. EARLY: idleE, paidC, paidT. -/
 inductive St where
   | idleL | paid | idleE | paidC | paidT
 deriving DecidableEq
@@ -51,12 +51,14 @@ instance : Fintype St :=
   Fintype.ofList [.idleL, .paid, .idleE, .paidC, .paidT] (fun s => by cases s <;> simp)
 
 -- SLIDE: not-bisim
-/-- So idleL and idleE are not bisimilar: Hennessy-Milner (Cslib) turns a separating formula
-    into a proof. `vend` is finite-state, so it is image-finite, as the theorem requires. -/
-theorem not_bisimilar : ¬ (LTS.HomBisimilarity vend .idleL .idleE) := by
+/-- Hennessy-Milner turns the separating formula into a proof.
+    (vend is finite, so image-finite, as the theorem needs.) -/
+theorem not_bisimilar :
+    ¬ (LTS.HomBisimilarity vend .idleL .idleE) := by
   intro h
   rw [← theoryEq_eq_bisimilarity] at h
-  exact late_not_sat (theoryEq_satisfies (φ := φ) (show TheoryEq vend .idleE .idleL from h.symm) early_sat)
+  have h' : TheoryEq vend .idleE .idleL := h.symm
+  exact late_not_sat (theoryEq_satisfies (φ := φ) h' early_sat)
 
 #print axioms not_bisimilar
 -- END
