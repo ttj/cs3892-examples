@@ -2,7 +2,7 @@
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ttj/cs3892-examples/blob/main/notebooks/hw5-nn-verification.ipynb)
 
-Starters for the HW5 handout. **Out Tue Dec 1 · due Thu Dec 10, 11:59 p.m.** The handout, with the
+Starters for the HW5 handout. **Out Thu Nov 19 · due Fri Dec 4, 11:59 p.m.** The handout, with the
 questions and the points, is
 [`assignments/hw5.md`](https://github.com/ttj/cs3892-fmstai-fall2026/blob/main/assignments/hw5.md)
 in the class repository.
