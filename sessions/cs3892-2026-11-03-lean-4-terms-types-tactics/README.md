@@ -18,6 +18,7 @@ with the Lean 4 extension.
 | `lean/S19/Sorry.lean`, `python/04_sorry_and_axioms.py` | `sorry`, a home-made `axiom`, and a vacuous theorem (its hypothesis `x < 0` never holds for a `Nat`), each read with `#print axioms` | ``declaration uses `sorry` `` · `[propext, sorryAx, Quot.sound]` · `[all_zero]` · `does not depend on any axioms` · `vacuous`: `[propext, Quot.sound]`, proved and saying nothing |
 | `lean/S19/Sets.lean`, `python/05_sets_as_predicates.py` | sets as predicates; De Morgan for ∪, constructively; `¬¬p → p` with `by_cases` | `compl_union`: `[propext, Quot.sound]` · `not_not`: adds `Classical.choice` |
 | `lean/S19.lean`, `python/06_whole_library.py` | `lake build` of the whole project | builds, no `sorry`, no warning |
+| `lean/S19/Sort.lean`, `python/isort.py`, `python/07_sorting.py` | insertion sort on `Int` lists: `#eval`/`#guard` tests, then `isort_correct` — sorted and a permutation of the input, for **every** list; `isortBad` (drops a repeated value) passes its tests and Lean checks the counterexample; `csort` returns its own proof. The Python loop and its functional reading, tested with Hypothesis and differentially against Lean's `isort` | `[propext, Quot.sound]` · `[1, 1]` ↦ `[1]` · 300 / 300 random lists agree · NaN and `RecursionError` where Python and the model differ |
 
 `Sorry.lean` is meant to warn and `OmegaStops.lean` is meant to fail; `S19.lean` leaves both out,
 so `lake build` stays clean. HW4's own examples (`triple`, the traffic light, the token bucket and
