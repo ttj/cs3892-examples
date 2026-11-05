@@ -1,0 +1,125 @@
+// Lark LALR(1) grammar for the nuXmv/NuSMV subset used in EECS 6315 models
+// Supports multi-module models with process instantiation
+
+start: module+
+
+module: "MODULE" module_header section*
+
+module_header: IDENT "(" ident_list ")"    -> param_header
+             | IDENT                        -> simple_header
+
+?section: var_section
+        | define_section
+        | assign_section
+        | fairness_decl
+        | invarspec
+        | ctlspec
+        | ltlspec
+        | spec_default
+
+// ---- VAR section ----
+var_section: "VAR" var_decl+
+var_decl: IDENT ":" var_type ";"
+
+?var_type: "boolean"                                 -> bool_type
+         | "{" ident_list "}"                        -> enum_type
+         | range_bound ".." range_bound              -> range_type
+         | "process" IDENT "(" ident_list ")"        -> process_type
+         | "process" IDENT "(" ")"                   -> process_type_noargs
+
+range_bound: "-" INT   -> neg_bound
+           | INT        -> pos_bound
+           | IDENT      -> ident_bound
+
+ident_list: IDENT ("," IDENT)*
+
+// ---- DEFINE section ----
+define_section: "DEFINE" define_decl+
+define_decl: IDENT ":=" expr ";"
+
+// ---- ASSIGN section ----
+assign_section: "ASSIGN" assign_decl+
+
+?assign_decl: init_assign
+            | next_assign
+
+init_assign: "init" "(" IDENT ")" ":=" assign_body ";"
+next_assign: "next" "(" IDENT ")" ":=" assign_body ";"
+
+?assign_body: case_expr
+            | set_expr
+            | expr
+
+case_expr: "case" case_branch+ "esac"
+case_branch: expr ":" assign_body ";"
+
+set_expr: "{" expr ("," expr)* "}"
+
+// ---- FAIRNESS ----
+fairness_decl: "FAIRNESS" expr ";"?
+
+// ---- Specifications ----
+invarspec: "INVARSPEC" expr ";"?
+ctlspec: "CTLSPEC" expr ";"?
+ltlspec: "LTLSPEC" expr ";"?
+spec_default: "SPEC" expr ";"?
+
+// ---- Expressions (precedence low to high) ----
+?expr: impl_expr
+
+?impl_expr: or_expr "->" impl_expr      -> impl_op
+          | or_expr
+
+?or_expr: or_expr "|" and_expr          -> or_op
+        | and_expr
+
+?and_expr: and_expr "&" not_expr        -> and_op
+         | not_expr
+
+// Unary prefix: !, and temporal operators (AG AF AX EG EF EX G F X)
+// Temporal ops at same level as ! so they bind tighter than & | ->
+?not_expr: "!" not_expr                 -> neg_op
+         | "AG" not_expr                -> ag_op
+         | "AF" not_expr                -> af_op
+         | "AX" not_expr                -> ax_op
+         | "EG" not_expr                -> eg_op
+         | "EF" not_expr                -> ef_op
+         | "EX" not_expr                -> ex_op
+         | "G" not_expr                 -> g_op
+         | "F" not_expr                 -> f_op
+         | "X" not_expr                 -> x_op
+         | cmp_expr "U" cmp_expr        -> until_op
+         | cmp_expr
+
+?cmp_expr: arith_expr "=" arith_expr    -> eq_op
+         | arith_expr "!=" arith_expr   -> ne_op
+         | arith_expr ">=" arith_expr   -> ge_op
+         | arith_expr "<=" arith_expr   -> le_op
+         | arith_expr ">" arith_expr    -> gt_op
+         | arith_expr "<" arith_expr    -> lt_op
+         | arith_expr
+
+?arith_expr: arith_expr "+" term        -> add_op
+           | arith_expr "-" term        -> sub_op
+           | term
+
+?term: term "*" factor                  -> mul_op
+     | term "/" factor                  -> div_op
+     | term "mod" factor               -> mod_op
+     | factor
+
+?factor: "(" expr ")"
+       | "next" "(" IDENT ")"          -> next_ref
+       | "TRUE"                         -> true_const
+       | "FALSE"                        -> false_const
+       | "-" factor                     -> unary_minus
+       | INT                            -> int_lit
+       | IDENT                          -> var_ref
+
+// ---- Terminals ----
+// Dotted identifiers support qualified references (e.g., proc1.state)
+IDENT: /[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)*/
+INT: /[0-9]+/
+
+%ignore /\s+/
+%ignore /--[^\n]*/

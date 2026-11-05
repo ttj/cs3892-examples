@@ -1,0 +1,36 @@
+-- FIGURE: figures/mutex.svg   (the state machine, drawn -- scripts/draw_models.py)
+-- Session 20 -- session 11's mutex, ready to translate into Lean with scripts/smv2lean.
+--
+-- Each process, a and b, cycles idle -> trying -> critical -> idle, and enters its critical
+-- section only when the other is not in its own. A scheduler lets exactly ONE process take a
+-- step at a time; which one is the free input `move`, chosen afresh at every step.
+-- Session 11 wrote mutual exclusion as LTLSPEC G !(crit_a & crit_b); smv2lean translates
+-- INVARSPECs only, so here it is an INVARSPEC -- the same claim about every reachable state.
+--
+--   NuSMV mutex.smv     ->  mutual exclusion true
+
+MODULE main
+  VAR
+    a    : {idle, trying, critical};
+    b    : {idle, trying, critical};
+    move : 1..2;              -- the scheduler: 1 runs a this step, 2 runs b
+  DEFINE
+    crit_a := a = critical;
+    crit_b := b = critical;
+  ASSIGN
+    init(a) := idle;
+    init(b) := idle;
+    next(a) := case
+                 move = 1 & a = idle                   : trying;
+                 move = 1 & a = trying & b != critical : critical;
+                 move = 1 & a = critical               : idle;
+                 TRUE                                  : a;
+               esac;
+    next(b) := case
+                 move = 2 & b = idle                   : trying;
+                 move = 2 & b = trying & a != critical : critical;
+                 move = 2 & b = critical               : idle;
+                 TRUE                                  : b;
+               esac;
+
+  INVARSPEC !(crit_a & crit_b)     -- mutual exclusion: true

@@ -3,6 +3,9 @@
 
   `bucket N` has N tokens. Part 3 proved the bound for N = 10; a model checker
   can check N = 10, then N = 11, ... but never all N. Prove it for all N.
+
+  The unfolding hints of Part3Bucket.lean apply here too, with `bucket_init` and `bucket_step`
+  for `bucket N`. Session 20's `Switch.lean` builds reachable states forward the way 4.2 asks.
 -/
 import HW4.Defs
 namespace HW4.Part4

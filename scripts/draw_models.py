@@ -429,7 +429,7 @@ WHERE = {
     "cs3892-2026-10-27-bounded-model-checking-of-programs": ["counter", "agent_c", "retry", "gcd", "add2_mod16"],
     "cs3892-2026-10-29-loop-invariants-and-abstract-interpretation": ["add2", "counter", "agent_c", "shipping",
         "division", "ifelse_x15", "correlated", "vacuous"],
-    "cs3892-2026-11-05-lean-4-transition-systems": ["switch", "add2"],
+    "cs3892-2026-11-05-lean-4-transition-systems": ["switch", "add2", "modes_efsm", "mutex"],
     "cs3892-2026-11-10-cslib-machine-checked-foundations": ["vend_lts", "nba_fg_n"],
     "cs3892-2026-12-03-ai-for-formal-methods": ["counter", "free_x"],
 }

@@ -1,0 +1,37 @@
+-- FIGURE: figures/modes_efsm.svg   (the two-mode counter, drawn -- scripts/draw_models.py)
+-- Session 20 -- the course's two-mode counter (session 8's figure; HW2's ancestor), ready to
+-- translate into Lean with scripts/smv2lean. Same machine as fmaiv's day02/examples/counter.smv,
+-- with only its INVARSPEC properties kept: smv2lean turns each INVARSPEC into a Lean theorem stub.
+--
+-- press is a FREE INPUT: no init, no next, chosen afresh every step (it models a user).
+-- When on and not pressed, x counts up; a press, or reaching count_max, turns it off and resets x.
+--
+--   NuSMV counter.smv     ->  the first two INVARSPECs true, the third false (x reaches 10)
+
+MODULE main
+  VAR
+    mode  : {off, on};
+    press : boolean;
+    x     : 0..25;
+
+  DEFINE count_max := 10;
+
+  ASSIGN
+    init(mode) := off;
+    init(x)    := 0;
+    next(mode) := case
+                    mode = off & !press               : off;
+                    mode = off & press                : on;
+                    mode = on & !press & x < count_max : on;
+                    mode = on & (press | x >= count_max) : off;
+                    TRUE                              : mode;
+                  esac;
+    next(x)    := case
+                    mode = on & !press & x < count_max   : x + 1;
+                    mode = on & (press | x >= count_max) : 0;
+                    TRUE                                 : x;
+                  esac;
+
+INVARSPEC x <= count_max;            -- true
+INVARSPEC (mode = off) -> (x = 0);   -- true
+INVARSPEC x < count_max;             -- FALSE: x does reach 10

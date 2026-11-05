@@ -8,6 +8,8 @@
   To unfold the system in a hypothesis `h`:
       simp only [bucket10_eq, bucket_init] at h      -- an initial state
       simp only [bucket10_eq, bucket_step] at h      -- a step, then `cases h`
+  After `cases h`, a goal may mention `{ used := u + 1, left := l }.used`, which `omega`
+  cannot read; in that case `simp only at h ⊢` (or `show`) turns it into `u + 1` first.
 -/
 import HW4.Defs
 namespace HW4.Part3

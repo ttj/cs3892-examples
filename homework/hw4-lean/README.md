@@ -27,7 +27,7 @@ it pins Lean v4.29.0 and has different exercises.
 git clone --depth 1 https://github.com/ttj/cs3892-examples.git
 cd cs3892-examples/homework/hw4-lean
 python3 check_hw4.py            # installs elan + Lean v4.33.0 on first run if you have none
-lake build HW4.Part1Ladder      # or build one part while you work on it
+lake build HW4.Part1Ladder      # or one part at a time (~/.elan/bin/lake if the checker installed Lean)
 python3 check_hw4.py --strict   # the acceptance test: exits 0 only when every theorem is proved
 ```
 
