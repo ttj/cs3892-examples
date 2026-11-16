@@ -1,4 +1,4 @@
-"""HW5 Part 3 -- two verifiers on the same queries.
+"""HW5 Part 3 -- two verifiers on the same queries. OPTIONAL and ungraded (since Nov 16).
 
 CROWN (auto_LiRPA; sound, incomplete) and an exact MILP (HiGHS; sound and complete) on every
 (image, eps) of the grid below, with their verdicts and times. The queries come from your Part 1

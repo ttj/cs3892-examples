@@ -5,7 +5,8 @@
 Starters for the HW5 handout. **Out Thu Nov 19 · due Fri Dec 4, 11:59 p.m.** The handout, with the
 questions and the points, is
 [`assignments/hw5.md`](https://github.com/ttj/cs3892-fmstai-fall2026/blob/main/assignments/hw5.md)
-in the class repository.
+in the class repository. **Since Nov 16:** Part 3 is optional and ungraded; HW5 is graded out of 80
+(Parts 1, 2, 4, 5), scaled to 100.
 
 **The network** classifies MNIST digits downsampled to 14×14 (196 pixels in [0, 1]):
 196 → 32 → ReLU → 32 → ReLU → 10, 95.4% test accuracy. **Ten test images**, image *i* a digit *i*.
@@ -22,7 +23,7 @@ in the class repository.
 | `hw5lib.py` | all | the network, the images, the VNN-LIB parser and meaning check, the three tools. **Do not edit it**; the checker refuses a changed copy |
 | `part1_query.py` | 1 | write `make_vnnlib`: local robustness as a VNN-LIB property |
 | `part2_frontier.py` | 2 | write `binary_search`: the ε frontier of CROWN, the MILP and PGD |
-| `part3_compare.py` | 3 | the two verifiers on a grid; set `FINDING` |
+| `part3_compare.py` | 3 (optional) | the two verifiers on a grid; set `FINDING` |
 | `part4_bounds.py` | 4 | IBP vs CROWN vs α-CROWN: precision against cost (nothing to edit) |
 | `part5/` | 5 | three properties in English; the LLM's VNN-LIB and your corrected VNN-LIB |
 | `check_hw5.py` | all | runs every part: ok / placeholder / wrong / error |
@@ -36,14 +37,15 @@ pip install -r requirements.txt
 pip install --no-deps --ignore-requires-python -r requirements-lirpa.txt
 python3 check_hw5.py              # what is done, what is not
 python3 part1_query.py            # and so on, part by part
-python3 check_hw5.py --strict     # the acceptance test: exits 0 only when every part is OK
+python3 check_hw5.py --strict     # the acceptance test: exits 0 only when Parts 1, 2 and 5 are OK
 ```
 
 **Every tool version is pinned.** torch 2.11.0 is the CPU build (on Linux and Windows from PyTorch's
 own index; on macOS PyPI's build is CPU-only). auto_LiRPA 0.8.0 is pinned to its release commit,
 `e393035`, because its maintained releases are on GitHub only. Its metadata says Python 3.11 only,
-and the course checks it on 3.10 and 3.12, hence `--ignore-requires-python`. Use a virtual
-environment (`python3 -m venv .venv && . .venv/bin/activate`) so the pins don't disturb anything else.
+and the course checks it on 3.10 and 3.12, hence `--ignore-requires-python`. Use Python 3.10–3.13
+(on 3.14 or an Intel Mac, use Colab) and a virtual environment
+(`python3 -m venv .venv && . .venv/bin/activate`) so the pins don't disturb anything else.
 `check_hw5.py` says so if your versions differ.
 
 **Credits.** MNIST: Yann LeCun, Corinna Cortes and Christopher J.C. Burges,

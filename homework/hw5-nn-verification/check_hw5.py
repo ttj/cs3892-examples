@@ -1,7 +1,7 @@
 """HW5 checker: does each part run, and does it say what it should?
 
     python3 check_hw5.py            # a table, one row per part; exit 0 unless the setup is broken
-    python3 check_hw5.py --strict   # the acceptance test: exit 0 only when every part is OK
+    python3 check_hw5.py --strict   # the acceptance test: exit 0 only when Parts 1, 2 and 5 are OK
     python3 check_hw5.py --json     # the same, machine-readable (CI uses it)
 
 What is checked:
@@ -11,12 +11,14 @@ What is checked:
           (the box pixel by pixel, the unsafe output region as a set)
   Part 2  binary_search brackets the threshold of several monotone predicates within tol
   Part 3  FINDING is a grid query where CROWN says "unknown" and the MILP decides
+          (optional and ungraded since Nov 16: --strict does not require it)
   Part 4  nothing to check: run part4_bounds.py and answer in your report
   Part 5  all six .vnnlib files are there; the _fixed ones parse and mean the intended property
-          (the _llm ones are reported, right or wrong: finding what is wrong is the exercise)
+          (the _llm ones are reported, right or wrong: finding what is wrong is the exercise --
+          even while the _fixed ones are still placeholders)
 
-Exit codes: 0 ok (or, without --strict, any state of the parts), 1 --strict and something is
-not OK, 2 the shipped files were changed (the checker refuses to grade).
+Exit codes: 0 ok (or, without --strict, any state of the parts), 1 --strict and a required part
+(1, 2 or 5) is not OK, 2 the shipped files were changed (the checker refuses to grade).
 """
 from __future__ import annotations
 
@@ -42,6 +44,7 @@ PART1_QUERIES = [(4, 0.02), (4, 0.03), (4, 0.05), (0, 0.01), (7, 0.004)]
 # are the answer to Part 5.2): data/part5_intended.npz holds only which points of a fixed sample
 # (hw5lib.output_samples) each region contains, enough to say "matches" or to give a witness.
 P5 = {"P5a": (2, 0.02), "P5b": (3, 0.05), "P5c": (1, 0.01)}
+OPTIONAL = {"3"}       # Part 3 is optional and ungraded (Nov 16): --strict does not require it
 
 
 def sha256(p: Path) -> str:
@@ -55,7 +58,7 @@ def box(lib, x0, eps):
 
 def intended(lib, kind, i, eps, extra=None):
     """Part 1's robustness property, as the Spec it should parse to: the standard VNN-COMP form,
-    taught in session 25 and shown in the handout. (Reading it is allowed; writing the VNN-LIB
+    taught in session 24 and shown in the handout. (Reading it is allowed; writing the VNN-LIB
     that means it, and saying why it is the counterexample, is the exercise.)"""
     import numpy as np
     assert kind == "robust"
@@ -139,8 +142,10 @@ def check_part5(lib):
             if not p.exists():
                 return "wrong", f"{p.name} is missing"
             text = p.read_text()
-            if "PLACEHOLDER" in text:
-                return "placeholder", f"{p.name} is still the placeholder"
+            if "PLACEHOLDER" in text:          # keep going: the _llm files are reported before the _fixed exist
+                notes.append(f"{p.name}: still the placeholder")
+                status = "placeholder" if status == "ok" else status
+                continue
             try:
                 got = lib.parse_vnnlib(text)
                 diffs = lib.compare_to_bits(got, lo, hi, bits[name])
@@ -187,7 +192,7 @@ def main(argv) -> int:
             status, detail = "error", f"{type(ex).__name__}: {ex}\n" + traceback.format_exc(limit=2)
         res["parts"][part] = {"status": status, "detail": detail}
     res["parts"]["4"] = {"status": "info", "detail": "run part4_bounds.py and answer in your report"}
-    all_ok = all(v["status"] in ("ok", "info") for v in res["parts"].values())
+    all_ok = all(v["status"] in ("ok", "info") for k, v in res["parts"].items() if k not in OPTIONAL)
     if as_json:
         print(json.dumps(res, indent=1))
     else:
@@ -197,8 +202,9 @@ def main(argv) -> int:
                                                      f"{res['versions'][k]['want']})" for k in bad)))
         for k in sorted(res["parts"]):
             v = res["parts"][k]
-            print(f"  Part {k}: {v['status']:<12} {v['detail']}")
-        print("\nall parts OK" if all_ok else "\nnot every part is OK yet")
+            print(f"  Part {k}: {v['status']:<12} {v['detail']}" + ("   (optional, ungraded)" if k in OPTIONAL else ""))
+        print("\nall required parts OK (1, 2 and 5; Part 4 is graded from your report)" if all_ok
+              else "\nnot every required part is OK yet")
     return 1 if (strict and not all_ok) else 0
 
 
